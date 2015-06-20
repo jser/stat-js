@@ -1,0 +1,43 @@
+{
+  "coverage": "61.53%",
+  "expectCount": 52,
+  "actualCount": 32,
+  "files": {
+    "src/algo/AlgoItem.js": {
+      "expectCount": 5,
+      "actualCount": 3
+    },
+    "src/algo/AlgoPost.js": {
+      "expectCount": 5,
+      "actualCount": 3
+    },
+    "src/models/JSerItem.js": {
+      "expectCount": 8,
+      "actualCount": 6
+    },
+    "src/models/JSerItemRelatedLink.js": {
+      "expectCount": 4,
+      "actualCount": 2
+    },
+    "src/models/JSerPost.js": {
+      "expectCount": 9,
+      "actualCount": 7
+    },
+    "src/JSerStat.js": {
+      "expectCount": 10,
+      "actualCount": 5
+    },
+    "src/models/JSerWeek.js": {
+      "expectCount": 7,
+      "actualCount": 5
+    },
+    "src/compute/compute-tags.js": {
+      "expectCount": 2,
+      "actualCount": 1
+    },
+    "src/algo/algoSearch.js": {
+      "expectCount": 2,
+      "actualCount": 0
+    }
+  }
+}

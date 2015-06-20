@@ -1,0 +1,2077 @@
+[
+  {
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/JSerStat.js",
+    "memberof": null,
+    "longname": "src/JSerStat.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 2,
+    "content": "// LICENSE : MIT\n\"use strict\";\nimport Item from \"./models/JSerItem\"\nimport Post from \"./models/JSerPost\"\nimport Week from \"./models/JSerWeek\"\nimport AlgoItem from \"./algo/AlgoItem\"\nimport AlgoPost from \"./algo/AlgoPost.js\"\n\nfunction filterJSerCategory(article) {\n    return /jser/i.test(article.category);\n}\nexport default class JSerStat {\n    constructor() {\n        this._rawItems = require(\"../data/items.json\");\n        this._rawPosts = require(\"../data/posts.json\");\n        this.items = this._rawItems.map(function (item) {\n            return new Item(item);\n        });\n        // JSer カテゴリだけにする\n        this.posts = this._rawPosts.filter(filterJSerCategory).map((post, index) => {\n            return new Post(index + 1, post);\n        });\n        this.algoItem = new AlgoItem(this.items);\n    }\n\n    /**\n     * 全部で何週あるかを返す(投稿記事の数と一致)\n     * @returns {number}\n     */\n    getTotalWeekCount() {\n        return this.posts.length;\n    }\n\n    /**\n     * beginからendの範囲のJSerItemの配列を返す\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerItem[]}\n     */\n    getItemsBetWeen(beginDate, endDate) {\n        return this.algoItem.findItemsBetween(beginDate, endDate);\n    }\n\n    /**\n     * 全てのJSerWeekの配列を返す\n     * @returns {JSerWeek[]}\n     */\n    getJSerWeeks() {\n        var results = [];\n        this.posts.reduce((currentPost, nextPost)=> {\n            var jserWeek = new Week(currentPost, nextPost, this.algoItem);\n            results.push(jserWeek);\n            return nextPost;\n        });\n        return results;\n    }\n\n    /**\n     * beginからendの範囲のJSerWeekの配列を返す\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerWeek[]}\n     */\n    getJSerWeeksBetWeen(beginDate, endDate) {\n        var results = [];\n        var algoPost = new AlgoPost(this.posts);\n        var posts = algoPost.findPostsBetween(beginDate, endDate);\n        posts.reduce((currentPost, nextPost)=> {\n            var jserWeek = new Week(currentPost, nextPost, this.algoItem);\n            results.push(jserWeek);\n            return nextPost;\n        });\n        return results;\n    }\n\n    /**\n     * JSer.info #xxx を返す\n     * @param {number} number number start with 1\n     * @returns {JSerWeek}\n     */\n    getJSerWeek(number) {\n        if (number <= 0) {\n            throw new Error(`number:${number} should be >= 1`);\n        }\n        if (number > this.posts.length) {\n            return null;\n        }\n        var targetPost = this.posts[number - 1];\n        var nextPost = this.posts[number];\n        return new Week(targetPost, nextPost, this.algoItem);\n    }\n}"
+  },
+  {
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "filterJSerCategory",
+    "memberof": "src/JSerStat.js",
+    "longname": "src/JSerStat.js~filterJSerCategory",
+    "access": null,
+    "export": false,
+    "importPath": "jser-stat/src/JSerStat.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 9,
+    "undocument": true,
+    "params": [
+      {
+        "name": "article",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "kind": "class",
+    "static": true,
+    "variation": null,
+    "name": "JSerStat",
+    "memberof": "src/JSerStat.js",
+    "longname": "src/JSerStat.js~JSerStat",
+    "access": null,
+    "export": true,
+    "importPath": "jser-stat/src/JSerStat.js",
+    "importStyle": "JSerStat",
+    "description": null,
+    "lineNumber": 12,
+    "undocument": true,
+    "interface": false
+  },
+  {
+    "kind": "constructor",
+    "static": false,
+    "variation": null,
+    "name": "constructor",
+    "memberof": "src/JSerStat.js~JSerStat",
+    "longname": "src/JSerStat.js~JSerStat#constructor",
+    "access": null,
+    "description": null,
+    "lineNumber": 13,
+    "undocument": true,
+    "params": [],
+    "generator": false
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "_rawItems",
+    "memberof": "src/JSerStat.js~JSerStat",
+    "longname": "src/JSerStat.js~JSerStat#_rawItems",
+    "access": null,
+    "description": null,
+    "lineNumber": 14,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "_rawPosts",
+    "memberof": "src/JSerStat.js~JSerStat",
+    "longname": "src/JSerStat.js~JSerStat#_rawPosts",
+    "access": null,
+    "description": null,
+    "lineNumber": 15,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "items",
+    "memberof": "src/JSerStat.js~JSerStat",
+    "longname": "src/JSerStat.js~JSerStat#items",
+    "access": null,
+    "description": null,
+    "lineNumber": 16,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "posts",
+    "memberof": "src/JSerStat.js~JSerStat",
+    "longname": "src/JSerStat.js~JSerStat#posts",
+    "access": null,
+    "description": null,
+    "lineNumber": 20,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "algoItem",
+    "memberof": "src/JSerStat.js~JSerStat",
+    "longname": "src/JSerStat.js~JSerStat#algoItem",
+    "access": null,
+    "description": null,
+    "lineNumber": 23,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "getTotalWeekCount",
+    "memberof": "src/JSerStat.js~JSerStat",
+    "longname": "src/JSerStat.js~JSerStat#getTotalWeekCount",
+    "access": null,
+    "description": "全部で何週あるかを返す(投稿記事の数と一致)",
+    "lineNumber": 30,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{number}"
+      }
+    ],
+    "params": [],
+    "return": {
+      "nullable": null,
+      "types": [
+        "number"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "getItemsBetWeen",
+    "memberof": "src/JSerStat.js~JSerStat",
+    "longname": "src/JSerStat.js~JSerStat#getItemsBetWeen",
+    "access": null,
+    "description": "beginからendの範囲のJSerItemの配列を返す",
+    "lineNumber": 40,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{JSerItem[]}"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Date"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "beginDate",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Date"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "endDate",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "JSerItem[]"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "getJSerWeeks",
+    "memberof": "src/JSerStat.js~JSerStat",
+    "longname": "src/JSerStat.js~JSerStat#getJSerWeeks",
+    "access": null,
+    "description": "全てのJSerWeekの配列を返す",
+    "lineNumber": 48,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{JSerWeek[]}"
+      }
+    ],
+    "params": [],
+    "return": {
+      "nullable": null,
+      "types": [
+        "JSerWeek[]"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "getJSerWeeksBetWeen",
+    "memberof": "src/JSerStat.js~JSerStat",
+    "longname": "src/JSerStat.js~JSerStat#getJSerWeeksBetWeen",
+    "access": null,
+    "description": "beginからendの範囲のJSerWeekの配列を返す",
+    "lineNumber": 64,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{JSerWeek[]}"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Date"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "beginDate",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Date"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "endDate",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "JSerWeek[]"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "getJSerWeek",
+    "memberof": "src/JSerStat.js~JSerStat",
+    "longname": "src/JSerStat.js~JSerStat#getJSerWeek",
+    "access": null,
+    "description": "JSer.info #xxx を返す",
+    "lineNumber": 81,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{JSerWeek}"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "number",
+        "description": "number start with 1"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "JSerWeek"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/algo/AlgoItem.js",
+    "memberof": null,
+    "longname": "src/algo/AlgoItem.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 2,
+    "content": "// LICENSE : MIT\n\"use strict\";\nimport {findIndexBiggerTime,findIndexLessTime} from \"./algoSearch.js\"\n\n// for algorithm\nexport default class AlgoItem {\n    /**\n     *\n     * @param {JSerItem[]} items\n     */\n    constructor(items) {\n        this.items = items;\n        /**\n         * @type number[] 昇順となった各Itemのtime配列\n         */\n        this.itemTimeIndex = items.map(function (item) {\n            return item.date.getTime();\n        });\n    }\n\n    /**\n     *\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerItem[]}\n     */\n    findItemsBetween(beginDate, endDate) {\n        var beginTime = beginDate.getTime();\n        var endTime = endDate.getTime();\n        var beginItemIndex = findIndexBiggerTime(this.itemTimeIndex, beginTime);\n        var endItemIndex = findIndexLessTime(this.itemTimeIndex, endTime);\n        // 範囲外なら空\n        if (beginItemIndex === -1 || endItemIndex === -1) {\n            return [];\n        }\n        //console.log(`${beginDate}@${endDate}`);\n        //console.log(`${beginItemIndex}@${endItemIndex}`);\n        if (beginItemIndex === endItemIndex) {\n            return [this.items[beginItemIndex]];\n        }\n        return this.items.slice(beginItemIndex, endItemIndex);\n    }\n\n}"
+  },
+  {
+    "kind": "class",
+    "static": true,
+    "variation": null,
+    "name": "AlgoItem",
+    "memberof": "src/algo/AlgoItem.js",
+    "longname": "src/algo/AlgoItem.js~AlgoItem",
+    "access": null,
+    "export": true,
+    "importPath": "jser-stat/src/algo/AlgoItem.js",
+    "importStyle": "AlgoItem",
+    "description": null,
+    "lineNumber": 6,
+    "undocument": true,
+    "interface": false
+  },
+  {
+    "kind": "constructor",
+    "static": false,
+    "variation": null,
+    "name": "constructor",
+    "memberof": "src/algo/AlgoItem.js~AlgoItem",
+    "longname": "src/algo/AlgoItem.js~AlgoItem#constructor",
+    "access": null,
+    "description": "",
+    "lineNumber": 11,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "JSerItem[]"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "items",
+        "description": ""
+      }
+    ],
+    "generator": false
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "items",
+    "memberof": "src/algo/AlgoItem.js~AlgoItem",
+    "longname": "src/algo/AlgoItem.js~AlgoItem#items",
+    "access": null,
+    "description": null,
+    "lineNumber": 12,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "itemTimeIndex",
+    "memberof": "src/algo/AlgoItem.js~AlgoItem",
+    "longname": "src/algo/AlgoItem.js~AlgoItem#itemTimeIndex",
+    "access": null,
+    "description": null,
+    "lineNumber": 16,
+    "type": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "findItemsBetween",
+    "memberof": "src/algo/AlgoItem.js~AlgoItem",
+    "longname": "src/algo/AlgoItem.js~AlgoItem#findItemsBetween",
+    "access": null,
+    "description": "",
+    "lineNumber": 27,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{JSerItem[]}"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Date"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "beginDate",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Date"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "endDate",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "JSerItem[]"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/algo/AlgoPost.js",
+    "memberof": null,
+    "longname": "src/algo/AlgoPost.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 2,
+    "content": "// LICENSE : MIT\n\"use strict\";\nimport {findIndexBiggerTime,findIndexLessTime} from \"./algoSearch.js\"\n\n// for algorithm\nexport default class AlgoPost {\n    /**\n     *\n     * @param {JSerPost[]} posts\n     */\n    constructor(posts) {\n        this.posts = posts;\n        /**\n         * @type number[] 昇順となった各Postのtime配列\n         */\n        this.postTimeIndex = posts.map(function (post) {\n            return post.date.getTime();\n        });\n    }\n\n    /**\n     *\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerPost[]}\n     */\n    findPostsBetween(beginDate, endDate) {\n        var beginTime = beginDate.getTime();\n        var endTime = endDate.getTime();\n        var beginItemIndex = findIndexBiggerTime(this.postTimeIndex, beginTime);\n        var endItemIndex = findIndexLessTime(this.postTimeIndex, endTime);\n        // 範囲外なら空\n        if (beginItemIndex === -1 || endItemIndex === -1) {\n            return [];\n        }\n        if (beginItemIndex === endItemIndex) {\n            return [this.posts[beginItemIndex]];\n        }\n        return this.posts.slice(beginItemIndex, endItemIndex);\n    }\n\n}"
+  },
+  {
+    "kind": "class",
+    "static": true,
+    "variation": null,
+    "name": "AlgoPost",
+    "memberof": "src/algo/AlgoPost.js",
+    "longname": "src/algo/AlgoPost.js~AlgoPost",
+    "access": null,
+    "export": true,
+    "importPath": "jser-stat/src/algo/AlgoPost.js",
+    "importStyle": "AlgoPost",
+    "description": null,
+    "lineNumber": 6,
+    "undocument": true,
+    "interface": false
+  },
+  {
+    "kind": "constructor",
+    "static": false,
+    "variation": null,
+    "name": "constructor",
+    "memberof": "src/algo/AlgoPost.js~AlgoPost",
+    "longname": "src/algo/AlgoPost.js~AlgoPost#constructor",
+    "access": null,
+    "description": "",
+    "lineNumber": 11,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "JSerPost[]"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "posts",
+        "description": ""
+      }
+    ],
+    "generator": false
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "posts",
+    "memberof": "src/algo/AlgoPost.js~AlgoPost",
+    "longname": "src/algo/AlgoPost.js~AlgoPost#posts",
+    "access": null,
+    "description": null,
+    "lineNumber": 12,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "postTimeIndex",
+    "memberof": "src/algo/AlgoPost.js~AlgoPost",
+    "longname": "src/algo/AlgoPost.js~AlgoPost#postTimeIndex",
+    "access": null,
+    "description": null,
+    "lineNumber": 16,
+    "type": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "findPostsBetween",
+    "memberof": "src/algo/AlgoPost.js~AlgoPost",
+    "longname": "src/algo/AlgoPost.js~AlgoPost#findPostsBetween",
+    "access": null,
+    "description": "",
+    "lineNumber": 27,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{JSerPost[]}"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Date"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "beginDate",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Date"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "endDate",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "JSerPost[]"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/algo/algoSearch.js",
+    "memberof": null,
+    "longname": "src/algo/algoSearch.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 2,
+    "content": "// LICENSE : MIT\n\"use strict\";\nexport function findIndexBiggerTime(array, time) {\n    var currentIndex = 0;\n    for (var i = currentIndex; i < array.length; i++) {\n        var comparedTime = array[i];\n        if (time >= comparedTime) {\n            currentIndex = i;\n        } else {\n            // timeより大きいものが出てきたら直前のものを返す\n            return currentIndex;\n        }\n    }\n    return -1\n}\n\nexport function findIndexLessTime(array, time) {\n    var currentIndex = array.length - 1;\n    for (var i = currentIndex; i >= 0; i--) {\n        var comparedTime = array[i];\n        if (time < comparedTime) {\n            currentIndex = i;\n        } else {\n            // timeよりも小さいものが出てきたら直前のものを返す\n            return currentIndex;\n        }\n    }\n    return -1;\n}\n\nfunction compare_number(a, b) {\n    return a - b;\n}"
+  },
+  {
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "findIndexBiggerTime",
+    "memberof": "src/algo/algoSearch.js",
+    "longname": "src/algo/algoSearch.js~findIndexBiggerTime",
+    "access": null,
+    "export": true,
+    "importPath": "jser-stat/src/algo/algoSearch.js",
+    "importStyle": "{findIndexBiggerTime}",
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "params": [
+      {
+        "name": "array",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "time",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "findIndexLessTime",
+    "memberof": "src/algo/algoSearch.js",
+    "longname": "src/algo/algoSearch.js~findIndexLessTime",
+    "access": null,
+    "export": true,
+    "importPath": "jser-stat/src/algo/algoSearch.js",
+    "importStyle": "{findIndexLessTime}",
+    "description": null,
+    "lineNumber": 17,
+    "undocument": true,
+    "params": [
+      {
+        "name": "array",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "time",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "compare_number",
+    "memberof": "src/algo/algoSearch.js",
+    "longname": "src/algo/algoSearch.js~compare_number",
+    "access": null,
+    "export": false,
+    "importPath": "jser-stat/src/algo/algoSearch.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 31,
+    "undocument": true,
+    "params": [
+      {
+        "name": "a",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "b",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/compute/compute-tags.js",
+    "memberof": null,
+    "longname": "src/compute/compute-tags.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 2,
+    "content": "// LICENSE : MIT\n\"use strict\";\n/**\n * {タグ名:出現回数}のオブジェクトを返す\n * @param {JSerWeek[]} weeks\n * @returns {{string:number}}\n */\nexport function countTagsByGroup(weeks) {\n    return countByGroup(weeks, function (item) {\n        var rank = {};\n        item.tags.forEach(function (tag) {\n            rank[tag] = ++rank[tag] || 1;\n        });\n        return rank;\n    });\n}\nexport function countByGroup(weeks, countFn) {\n    var rank = {};\n    weeks.forEach(function (week) {\n        week.items.forEach(function (item) {\n            var ret = countFn(item);\n            var keys = Object.keys(ret);\n            keys.forEach(function (key) {\n                rank[key] = (rank[key] || 0) + ret[key];\n            });\n        });\n    });\n    return rank;\n}"
+  },
+  {
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "countTagsByGroup",
+    "memberof": "src/compute/compute-tags.js",
+    "longname": "src/compute/compute-tags.js~countTagsByGroup",
+    "access": null,
+    "export": true,
+    "importPath": "jser-stat/src/compute/compute-tags.js",
+    "importStyle": "{countTagsByGroup}",
+    "description": "{タグ名:出現回数}のオブジェクトを返す",
+    "lineNumber": 8,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{{string:number}}"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "JSerWeek[]"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "weeks",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "{string:number}"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "countByGroup",
+    "memberof": "src/compute/compute-tags.js",
+    "longname": "src/compute/compute-tags.js~countByGroup",
+    "access": null,
+    "export": true,
+    "importPath": "jser-stat/src/compute/compute-tags.js",
+    "importStyle": "{countByGroup}",
+    "description": null,
+    "lineNumber": 17,
+    "undocument": true,
+    "params": [
+      {
+        "name": "weeks",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "countFn",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/index.js",
+    "memberof": null,
+    "longname": "src/index.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 2,
+    "content": "// LICENSE : MIT\n\"use strict\";\nmodule.exports = {\n    JSerStat: require(\"./JSerStat\"),\n    compute: require(\"./compute/compute-tags\")\n};"
+  },
+  {
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/models/JSerItem.js",
+    "memberof": null,
+    "longname": "src/models/JSerItem.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 2,
+    "content": "// LICENSE : MIT\n\"use strict\";\nimport RelatedLink from \"./JSerItemRelatedLink\"\nexport default class JSerItem {\n    constructor(item) {\n        /** @type {string} */\n        this.title = item[\"title\"];\n        /** @type {string} */\n        this.url = item[\"url\"];\n        /** @type {string} */\n        this.content = item[\"content\"];\n        /** @type {string[]} */\n        this.tags = item[\"tags\"] || [];\n        /** @type {Date} */\n        this.date = new Date(item[\"date\"]);\n        var relatedLinks = item[\"relatedLinks\"] || [];\n        /** @type {JSerItemRelatedLink[]} */\n        this.relatedLinks = relatedLinks.map(function (link) {\n            return new RelatedLink(link);\n        });\n    }\n}"
+  },
+  {
+    "kind": "class",
+    "static": true,
+    "variation": null,
+    "name": "JSerItem",
+    "memberof": "src/models/JSerItem.js",
+    "longname": "src/models/JSerItem.js~JSerItem",
+    "access": null,
+    "export": true,
+    "importPath": "jser-stat/src/models/JSerItem.js",
+    "importStyle": "JSerItem",
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "interface": false
+  },
+  {
+    "kind": "constructor",
+    "static": false,
+    "variation": null,
+    "name": "constructor",
+    "memberof": "src/models/JSerItem.js~JSerItem",
+    "longname": "src/models/JSerItem.js~JSerItem#constructor",
+    "access": null,
+    "description": null,
+    "lineNumber": 5,
+    "undocument": true,
+    "params": [
+      {
+        "name": "item",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "generator": false
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "title",
+    "memberof": "src/models/JSerItem.js~JSerItem",
+    "longname": "src/models/JSerItem.js~JSerItem#title",
+    "access": null,
+    "description": null,
+    "lineNumber": 7,
+    "type": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "url",
+    "memberof": "src/models/JSerItem.js~JSerItem",
+    "longname": "src/models/JSerItem.js~JSerItem#url",
+    "access": null,
+    "description": null,
+    "lineNumber": 9,
+    "type": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "content",
+    "memberof": "src/models/JSerItem.js~JSerItem",
+    "longname": "src/models/JSerItem.js~JSerItem#content",
+    "access": null,
+    "description": null,
+    "lineNumber": 11,
+    "type": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "tags",
+    "memberof": "src/models/JSerItem.js~JSerItem",
+    "longname": "src/models/JSerItem.js~JSerItem#tags",
+    "access": null,
+    "description": null,
+    "lineNumber": 13,
+    "type": {
+      "nullable": null,
+      "types": [
+        "string[]"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "date",
+    "memberof": "src/models/JSerItem.js~JSerItem",
+    "longname": "src/models/JSerItem.js~JSerItem#date",
+    "access": null,
+    "description": null,
+    "lineNumber": 15,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Date"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "relatedLinks",
+    "memberof": "src/models/JSerItem.js~JSerItem",
+    "longname": "src/models/JSerItem.js~JSerItem#relatedLinks",
+    "access": null,
+    "description": null,
+    "lineNumber": 18,
+    "type": {
+      "nullable": null,
+      "types": [
+        "JSerItemRelatedLink[]"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/models/JSerItemRelatedLink.js",
+    "memberof": null,
+    "longname": "src/models/JSerItemRelatedLink.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 2,
+    "content": "// LICENSE : MIT\n\"use strict\";\nexport default class JSerItemRelatedLink {\n    constructor(link) {\n        /** @type {string} */\n        this.title = link[\"title\"];\n        /** @type {string} */\n        this.url = link[\"url\"];\n    }\n}"
+  },
+  {
+    "kind": "class",
+    "static": true,
+    "variation": null,
+    "name": "JSerItemRelatedLink",
+    "memberof": "src/models/JSerItemRelatedLink.js",
+    "longname": "src/models/JSerItemRelatedLink.js~JSerItemRelatedLink",
+    "access": null,
+    "export": true,
+    "importPath": "jser-stat/src/models/JSerItemRelatedLink.js",
+    "importStyle": "JSerItemRelatedLink",
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "interface": false
+  },
+  {
+    "kind": "constructor",
+    "static": false,
+    "variation": null,
+    "name": "constructor",
+    "memberof": "src/models/JSerItemRelatedLink.js~JSerItemRelatedLink",
+    "longname": "src/models/JSerItemRelatedLink.js~JSerItemRelatedLink#constructor",
+    "access": null,
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "params": [
+      {
+        "name": "link",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "generator": false
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "title",
+    "memberof": "src/models/JSerItemRelatedLink.js~JSerItemRelatedLink",
+    "longname": "src/models/JSerItemRelatedLink.js~JSerItemRelatedLink#title",
+    "access": null,
+    "description": null,
+    "lineNumber": 6,
+    "type": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "url",
+    "memberof": "src/models/JSerItemRelatedLink.js~JSerItemRelatedLink",
+    "longname": "src/models/JSerItemRelatedLink.js~JSerItemRelatedLink#url",
+    "access": null,
+    "description": null,
+    "lineNumber": 8,
+    "type": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/models/JSerPost.js",
+    "memberof": null,
+    "longname": "src/models/JSerPost.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 2,
+    "content": "// LICENSE : MIT\n\"use strict\";\nexport default class JSerPost {\n    constructor(number, post) {\n        /** @type {number} */\n            // start with 1\n        this.postNumber = number;\n        /** @type {string} */\n        this.title = post[\"title\"];\n        /** @type {string} */\n        this.url = post[\"url\"];\n        /** @type {string} */\n        this.content = post[\"content\"];\n        /** @type {string} */\n        this.category = post[\"category\"];\n        /** @type {Date} */\n        this.date = new Date(post[\"date\"]);\n        /** @type {string[]} */\n        this.tags = post[\"tags\"] || [];\n    }\n}"
+  },
+  {
+    "kind": "class",
+    "static": true,
+    "variation": null,
+    "name": "JSerPost",
+    "memberof": "src/models/JSerPost.js",
+    "longname": "src/models/JSerPost.js~JSerPost",
+    "access": null,
+    "export": true,
+    "importPath": "jser-stat/src/models/JSerPost.js",
+    "importStyle": "JSerPost",
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "interface": false
+  },
+  {
+    "kind": "constructor",
+    "static": false,
+    "variation": null,
+    "name": "constructor",
+    "memberof": "src/models/JSerPost.js~JSerPost",
+    "longname": "src/models/JSerPost.js~JSerPost#constructor",
+    "access": null,
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "params": [
+      {
+        "name": "number",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "post",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "generator": false
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "postNumber",
+    "memberof": "src/models/JSerPost.js~JSerPost",
+    "longname": "src/models/JSerPost.js~JSerPost#postNumber",
+    "access": null,
+    "description": null,
+    "lineNumber": 7,
+    "type": {
+      "nullable": null,
+      "types": [
+        "number"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "title",
+    "memberof": "src/models/JSerPost.js~JSerPost",
+    "longname": "src/models/JSerPost.js~JSerPost#title",
+    "access": null,
+    "description": null,
+    "lineNumber": 9,
+    "type": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "url",
+    "memberof": "src/models/JSerPost.js~JSerPost",
+    "longname": "src/models/JSerPost.js~JSerPost#url",
+    "access": null,
+    "description": null,
+    "lineNumber": 11,
+    "type": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "content",
+    "memberof": "src/models/JSerPost.js~JSerPost",
+    "longname": "src/models/JSerPost.js~JSerPost#content",
+    "access": null,
+    "description": null,
+    "lineNumber": 13,
+    "type": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "category",
+    "memberof": "src/models/JSerPost.js~JSerPost",
+    "longname": "src/models/JSerPost.js~JSerPost#category",
+    "access": null,
+    "description": null,
+    "lineNumber": 15,
+    "type": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "date",
+    "memberof": "src/models/JSerPost.js~JSerPost",
+    "longname": "src/models/JSerPost.js~JSerPost#date",
+    "access": null,
+    "description": null,
+    "lineNumber": 17,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Date"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "tags",
+    "memberof": "src/models/JSerPost.js~JSerPost",
+    "longname": "src/models/JSerPost.js~JSerPost#tags",
+    "access": null,
+    "description": null,
+    "lineNumber": 19,
+    "type": {
+      "nullable": null,
+      "types": [
+        "string[]"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/models/JSerWeek.js",
+    "memberof": null,
+    "longname": "src/models/JSerWeek.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 2,
+    "content": "// LICENSE : MIT\n\"use strict\";\nexport default class JSerWeek {\n    constructor(currentPost, nextPost, algoItem) {\n        /** @type {number} */\n        this.weekNumber = currentPost.postNumber;\n        /** @type {Date} */\n        this.beginDate = currentPost.date;\n        /** @type {Date} */\n        this.endDate = nextPost ? nextPost.date : null;\n        /** @type {JSerPost} */\n        this.post = currentPost;\n        /** @type {JSerItem[]} */\n        this.items = algoItem.findItemsBetween(this.beginDate, this.endDate || new Date());\n    }\n}"
+  },
+  {
+    "kind": "class",
+    "static": true,
+    "variation": null,
+    "name": "JSerWeek",
+    "memberof": "src/models/JSerWeek.js",
+    "longname": "src/models/JSerWeek.js~JSerWeek",
+    "access": null,
+    "export": true,
+    "importPath": "jser-stat/src/models/JSerWeek.js",
+    "importStyle": "JSerWeek",
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "interface": false
+  },
+  {
+    "kind": "constructor",
+    "static": false,
+    "variation": null,
+    "name": "constructor",
+    "memberof": "src/models/JSerWeek.js~JSerWeek",
+    "longname": "src/models/JSerWeek.js~JSerWeek#constructor",
+    "access": null,
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "params": [
+      {
+        "name": "currentPost",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "nextPost",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "algoItem",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "generator": false
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "weekNumber",
+    "memberof": "src/models/JSerWeek.js~JSerWeek",
+    "longname": "src/models/JSerWeek.js~JSerWeek#weekNumber",
+    "access": null,
+    "description": null,
+    "lineNumber": 6,
+    "type": {
+      "nullable": null,
+      "types": [
+        "number"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "beginDate",
+    "memberof": "src/models/JSerWeek.js~JSerWeek",
+    "longname": "src/models/JSerWeek.js~JSerWeek#beginDate",
+    "access": null,
+    "description": null,
+    "lineNumber": 8,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Date"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "endDate",
+    "memberof": "src/models/JSerWeek.js~JSerWeek",
+    "longname": "src/models/JSerWeek.js~JSerWeek#endDate",
+    "access": null,
+    "description": null,
+    "lineNumber": 10,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Date"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "post",
+    "memberof": "src/models/JSerWeek.js~JSerWeek",
+    "longname": "src/models/JSerWeek.js~JSerWeek#post",
+    "access": null,
+    "description": null,
+    "lineNumber": 12,
+    "type": {
+      "nullable": null,
+      "types": [
+        "JSerPost"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "items",
+    "memberof": "src/models/JSerWeek.js~JSerWeek",
+    "longname": "src/models/JSerWeek.js~JSerWeek#items",
+    "access": null,
+    "description": null,
+    "lineNumber": 14,
+    "type": {
+      "nullable": null,
+      "types": [
+        "JSerItem[]"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Infinity",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Infinity",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Infinity",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "NaN",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~NaN",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "undefined",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~undefined",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "null",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~null",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Object",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Object",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "object",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~object",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Function",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Function",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "function",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~function",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Boolean",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Boolean",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "boolean",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~boolean",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Symbol",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Symbol",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Error",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Error",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "EvalError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/EvalError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~EvalError",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "InternalError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/InternalError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~InternalError",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "RangeError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RangeError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~RangeError",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "ReferenceError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ReferenceError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~ReferenceError",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "SyntaxError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~SyntaxError",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "TypeError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~TypeError",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "URIError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/URIError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~URIError",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Number",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Number",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "number",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~number",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Date",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Date",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "String",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~String",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "string",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~string",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "RegExp",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~RegExp",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Array",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Int8Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int8Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int8Array",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Uint8Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint8Array",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Uint8ClampedArray",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint8ClampedArray",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Int16Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int16Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int16Array",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Uint16Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint16Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint16Array",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Int32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int32Array",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Uint32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint32Array",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Float32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Float32Array",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Float64Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float64Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Float64Array",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Map",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Map",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Set",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Set",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "WeakMap",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~WeakMap",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "WeakSet",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~WeakSet",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "ArrayBuffer",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~ArrayBuffer",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "DataView",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~DataView",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "JSON",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~JSON",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Promise",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Promise",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Generator",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Generator",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "GeneratorFunction",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~GeneratorFunction",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Reflect",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Reflect",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Proxy",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Proxy",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "CanvasRenderingContext2D",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~CanvasRenderingContext2D",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "DocumentFragment",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~DocumentFragment",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Element",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Element",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~Element",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Event",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Event",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~Event",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Node",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Node",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~Node",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "NodeList",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/NodeList",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~NodeList",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "XMLHttpRequest",
+    "externalLink": "https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequest",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~XMLHttpRequest",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  }
+]

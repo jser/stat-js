@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl">
+  <title data-ice="title">API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+</head>
+<body class="layout-container">
+
+<header>
+  <a href="./">Home</a>
+  <a href="identifiers.html">Identifier</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/jser/stat-js.git" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div data-ice="classWrap">
+  <h2>Class</h2>
+  <ul>
+    
+  <li data-ice="classDoc"><span><a href="class/src/algo/AlgoItem.js~AlgoItem.html">AlgoItem</a></span></li>
+<li data-ice="classDoc"><span><a href="class/src/algo/AlgoPost.js~AlgoPost.html">AlgoPost</a></span></li>
+<li data-ice="classDoc"><span><a href="class/src/models/JSerItem.js~JSerItem.html">JSerItem</a></span></li>
+<li data-ice="classDoc"><span><a href="class/src/models/JSerItemRelatedLink.js~JSerItemRelatedLink.html">JSerItemRelatedLink</a></span></li>
+<li data-ice="classDoc"><span><a href="class/src/models/JSerPost.js~JSerPost.html">JSerPost</a></span></li>
+<li data-ice="classDoc"><span><a href="class/src/JSerStat.js~JSerStat.html">JSerStat</a></span></li>
+<li data-ice="classDoc"><span><a href="class/src/models/JSerWeek.js~JSerWeek.html">JSerWeek</a></span></li>
+</ul>
+</div>
+
+
+
+<div data-ice="functionWrap">
+  <h2><a href="function/">Function</a></h2>
+  <ul>
+    
+  <li data-ice="functionDoc"><span><a href="function/index.html#static-function-countByGroup">countByGroup</a></span></li>
+<li data-ice="functionDoc"><span><a href="function/index.html#static-function-countTagsByGroup">countTagsByGroup</a></span></li>
+<li data-ice="functionDoc"><span><a href="function/index.html#static-function-findIndexBiggerTime">findIndexBiggerTime</a></span></li>
+<li data-ice="functionDoc"><span><a href="function/index.html#static-function-findIndexLessTime">findIndexLessTime</a></span></li>
+</ul>
+</div>
+
+
+
+
+
+
+</nav>
+
+<div class="content" data-ice="content"><div data-ice="index"><h1 id="jser-stat">jser-stat</h1>
+<p>JSer.info stat library</p>
+<h2 id="installation">Installation</h2>
+<pre><code><pre class="source-code"><code class="prettyprint">npm install jser-stat</code></pre>
+</code></pre><h2 id="data-source">Data Source</h2>
+<ul>
+<li><a href="http://jser.info/source-data/items.json">http://jser.info/source-data/items.json</a><ul>
+<li><a href="https://github.com/jser/source-data" title="jser/source-data">jser/source-data</a></li>
+<li>jser/jser.info&#x306E;&#x8A18;&#x4E8B;&#x5143;&#x3068;&#x306A;&#x308B;&#x30B5;&#x30A4;&#x30C8;&#x306E;&#x30C7;&#x30FC;&#x30BF;&#x3092;&#x4E00;&#x3064;&#x306E;JSON&#x3068;&#x3057;&#x3066;&#x56FA;&#x3081;&#x305F;&#x3082;&#x306E;</li>
+</ul>
+</li>
+<li><a href="http://jser.info/posts.json">http://jser.info/posts.json</a><ul>
+<li>jser.info&#x306E;&#x6295;&#x7A3F;&#x3057;&#x305F;&#x8A18;&#x4E8B;&#x306E;&#x30C7;&#x30FC;&#x30BF;</li>
+</ul>
+</li>
+</ul>
+<h2 id="usage">Usage</h2>
+<h3 id="models">Models</h3>
+<p>jser-stat has these model.</p>
+<ul>
+<li><a href="src/models/JSerItem.js">src/models/JSerItem.js</a> from <a href="https://github.com/jser/source-data" title="jser/source-data">jser/source-data</a></li>
+<li><a href="src/models/JSerItemRelatedLink.js">src/models/JSerItemRelatedLink.js</a> is sub model of JSerItem.</li>
+<li><a href="src/models/JSerPost.js">src/models/JSerPost.js</a> from <a href="https://github.com/jser/jser.github.io" title="jser/jser.github.io">jser/jser.github.io</a></li>
+<li><a href="src/models/JSerWeek.js">src/models/JSerWeek.js</a> is JSerItem + JSerPost</li>
+</ul>
+<h3 id="getitemsbetween-begindate-enddate-jseritem-">getItemsBetWeen(beginDate, endDate): JSerItem[]</h3>
+<p>return JSerItems between two dates</p>
+<h3 id="getjserweeks-jserweek-">getJSerWeeks(): JSerWeek[]</h3>
+<p>return all JSerWeeks</p>
+<h3 id="getjserweeksbetween-begindate-enddate-jserweek-">getJSerWeeksBetWeen(beginDate, endDate):  JSerWeek[]</h3>
+<p>return JSerWeeks between two dates</p>
+<h3 id="getjserweek-number-jserweek">getJSerWeek(number): JSerWeek</h3>
+<p>number start with 1.</p>
+<p>return JSerWeek at the number.</p>
+<h2 id="tests">Tests</h2>
+<pre><code><pre class="source-code"><code class="prettyprint">npm test</code></pre>
+</code></pre><h2 id="contributing">Contributing</h2>
+<ol>
+<li>Fork it!</li>
+<li>Create your feature branch: <code>git checkout -b my-new-feature</code></li>
+<li>Commit your changes: <code>git commit -am &apos;Add some feature&apos;</code></li>
+<li>Push to the branch: <code>git push origin my-new-feature</code></li>
+<li>Submit a pull request :D</li>
+</ol>
+<h2 id="license">License</h2>
+<p>MIT</p>
+</div>
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.1.2)</span></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

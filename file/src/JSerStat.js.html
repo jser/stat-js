@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">src/JSerStat.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+</head>
+<body class="layout-container">
+
+<header>
+  <a href="./">Home</a>
+  <a href="identifiers.html">Identifier</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/jser/stat-js.git" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div data-ice="classWrap">
+  <h2>Class</h2>
+  <ul>
+    
+  <li data-ice="classDoc"><span><a href="class/src/algo/AlgoItem.js~AlgoItem.html">AlgoItem</a></span></li>
+<li data-ice="classDoc"><span><a href="class/src/algo/AlgoPost.js~AlgoPost.html">AlgoPost</a></span></li>
+<li data-ice="classDoc"><span><a href="class/src/models/JSerItem.js~JSerItem.html">JSerItem</a></span></li>
+<li data-ice="classDoc"><span><a href="class/src/models/JSerItemRelatedLink.js~JSerItemRelatedLink.html">JSerItemRelatedLink</a></span></li>
+<li data-ice="classDoc"><span><a href="class/src/models/JSerPost.js~JSerPost.html">JSerPost</a></span></li>
+<li data-ice="classDoc"><span><a href="class/src/JSerStat.js~JSerStat.html">JSerStat</a></span></li>
+<li data-ice="classDoc"><span><a href="class/src/models/JSerWeek.js~JSerWeek.html">JSerWeek</a></span></li>
+</ul>
+</div>
+
+
+
+<div data-ice="functionWrap">
+  <h2><a href="function/">Function</a></h2>
+  <ul>
+    
+  <li data-ice="functionDoc"><span><a href="function/index.html#static-function-countByGroup">countByGroup</a></span></li>
+<li data-ice="functionDoc"><span><a href="function/index.html#static-function-countTagsByGroup">countTagsByGroup</a></span></li>
+<li data-ice="functionDoc"><span><a href="function/index.html#static-function-findIndexBiggerTime">findIndexBiggerTime</a></span></li>
+<li data-ice="functionDoc"><span><a href="function/index.html#static-function-findIndexLessTime">findIndexLessTime</a></span></li>
+</ul>
+</div>
+
+
+
+
+
+
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/JSerStat.js</h1>
+<pre class="source-code line-number"><code class="prettyprint linenums" data-ice="content">// LICENSE : MIT
+&quot;use strict&quot;;
+import Item from &quot;./models/JSerItem&quot;
+import Post from &quot;./models/JSerPost&quot;
+import Week from &quot;./models/JSerWeek&quot;
+import AlgoItem from &quot;./algo/AlgoItem&quot;
+import AlgoPost from &quot;./algo/AlgoPost.js&quot;
+
+function filterJSerCategory(article) {
+    return /jser/i.test(article.category);
+}
+export default class JSerStat {
+    constructor() {
+        this._rawItems = require(&quot;../data/items.json&quot;);
+        this._rawPosts = require(&quot;../data/posts.json&quot;);
+        this.items = this._rawItems.map(function (item) {
+            return new Item(item);
+        });
+        // JSer &#x30AB;&#x30C6;&#x30B4;&#x30EA;&#x3060;&#x3051;&#x306B;&#x3059;&#x308B;
+        this.posts = this._rawPosts.filter(filterJSerCategory).map((post, index) =&gt; {
+            return new Post(index + 1, post);
+        });
+        this.algoItem = new AlgoItem(this.items);
+    }
+
+    /**
+     * &#x5168;&#x90E8;&#x3067;&#x4F55;&#x9031;&#x3042;&#x308B;&#x304B;&#x3092;&#x8FD4;&#x3059;(&#x6295;&#x7A3F;&#x8A18;&#x4E8B;&#x306E;&#x6570;&#x3068;&#x4E00;&#x81F4;)
+     * @returns {number}
+     */
+    getTotalWeekCount() {
+        return this.posts.length;
+    }
+
+    /**
+     * begin&#x304B;&#x3089;end&#x306E;&#x7BC4;&#x56F2;&#x306E;JSerItem&#x306E;&#x914D;&#x5217;&#x3092;&#x8FD4;&#x3059;
+     * @param {Date} beginDate
+     * @param {Date} endDate
+     * @returns {JSerItem[]}
+     */
+    getItemsBetWeen(beginDate, endDate) {
+        return this.algoItem.findItemsBetween(beginDate, endDate);
+    }
+
+    /**
+     * &#x5168;&#x3066;&#x306E;JSerWeek&#x306E;&#x914D;&#x5217;&#x3092;&#x8FD4;&#x3059;
+     * @returns {JSerWeek[]}
+     */
+    getJSerWeeks() {
+        var results = [];
+        this.posts.reduce((currentPost, nextPost)=&gt; {
+            var jserWeek = new Week(currentPost, nextPost, this.algoItem);
+            results.push(jserWeek);
+            return nextPost;
+        });
+        return results;
+    }
+
+    /**
+     * begin&#x304B;&#x3089;end&#x306E;&#x7BC4;&#x56F2;&#x306E;JSerWeek&#x306E;&#x914D;&#x5217;&#x3092;&#x8FD4;&#x3059;
+     * @param {Date} beginDate
+     * @param {Date} endDate
+     * @returns {JSerWeek[]}
+     */
+    getJSerWeeksBetWeen(beginDate, endDate) {
+        var results = [];
+        var algoPost = new AlgoPost(this.posts);
+        var posts = algoPost.findPostsBetween(beginDate, endDate);
+        posts.reduce((currentPost, nextPost)=&gt; {
+            var jserWeek = new Week(currentPost, nextPost, this.algoItem);
+            results.push(jserWeek);
+            return nextPost;
+        });
+        return results;
+    }
+
+    /**
+     * JSer.info #xxx &#x3092;&#x8FD4;&#x3059;
+     * @param {number} number number start with 1
+     * @returns {JSerWeek}
+     */
+    getJSerWeek(number) {
+        if (number &lt;= 0) {
+            throw new Error(`number:${number} should be &gt;= 1`);
+        }
+        if (number &gt; this.posts.length) {
+            return null;
+        }
+        var targetPost = this.posts[number - 1];
+        var nextPost = this.posts[number];
+        return new Week(targetPost, nextPost, this.algoItem);
+    }
+}</code></pre>
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.1.2)</span></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>
