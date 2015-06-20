@@ -9,7 +9,7 @@
     "access": null,
     "description": null,
     "lineNumber": 2,
-    "content": "// LICENSE : MIT\n\"use strict\";\nimport Item from \"./models/JSerItem\"\nimport Post from \"./models/JSerPost\"\nimport Week from \"./models/JSerWeek\"\nimport AlgoItem from \"./algo/AlgoItem\"\nimport AlgoPost from \"./algo/AlgoPost.js\"\n\nfunction filterJSerCategory(article) {\n    return /jser/i.test(article.category);\n}\nexport default class JSerStat {\n    constructor() {\n        this._rawItems = require(\"../data/items.json\");\n        this._rawPosts = require(\"../data/posts.json\");\n        this.items = this._rawItems.map(function (item) {\n            return new Item(item);\n        });\n        // JSer カテゴリだけにする\n        this.posts = this._rawPosts.filter(filterJSerCategory).map((post, index) => {\n            return new Post(index + 1, post);\n        });\n        this.algoItem = new AlgoItem(this.items);\n    }\n\n    /**\n     * 全部で何週あるかを返す(投稿記事の数と一致)\n     * @returns {number}\n     */\n    getTotalWeekCount() {\n        return this.posts.length;\n    }\n\n    /**\n     * beginからendの範囲のJSerItemの配列を返す\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerItem[]}\n     */\n    getItemsBetWeen(beginDate, endDate) {\n        return this.algoItem.findItemsBetween(beginDate, endDate);\n    }\n\n    /**\n     * 全てのJSerWeekの配列を返す\n     * @returns {JSerWeek[]}\n     */\n    getJSerWeeks() {\n        var results = [];\n        this.posts.reduce((currentPost, nextPost)=> {\n            var jserWeek = new Week(currentPost, nextPost, this.algoItem);\n            results.push(jserWeek);\n            return nextPost;\n        });\n        return results;\n    }\n\n    /**\n     * beginからendの範囲のJSerWeekの配列を返す\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerWeek[]}\n     */\n    getJSerWeeksBetWeen(beginDate, endDate) {\n        var results = [];\n        var algoPost = new AlgoPost(this.posts);\n        var posts = algoPost.findPostsBetween(beginDate, endDate);\n        posts.reduce((currentPost, nextPost)=> {\n            var jserWeek = new Week(currentPost, nextPost, this.algoItem);\n            results.push(jserWeek);\n            return nextPost;\n        });\n        return results;\n    }\n\n    /**\n     * JSer.info #xxx を返す\n     * @param {number} number number start with 1\n     * @returns {JSerWeek}\n     */\n    getJSerWeek(number) {\n        if (number <= 0) {\n            throw new Error(`number:${number} should be >= 1`);\n        }\n        if (number > this.posts.length) {\n            return null;\n        }\n        var targetPost = this.posts[number - 1];\n        var nextPost = this.posts[number];\n        return new Week(targetPost, nextPost, this.algoItem);\n    }\n}"
+    "content": "// LICENSE : MIT\n\"use strict\";\nimport Item from \"./models/JSerItem\"\nimport Post from \"./models/JSerPost\"\nimport Week from \"./models/JSerWeek\"\nimport AlgoItem from \"./algo/AlgoItem\"\nimport AlgoPost from \"./algo/AlgoPost.js\"\n\nfunction filterJSerCategory(article) {\n    return /jser/i.test(article.category);\n}\nexport default class JSerStat {\n    constructor() {\n        this._rawItems = require(\"../data/items.json\");\n        this._rawPosts = require(\"../data/posts.json\");\n        /** @type {JSerItem[]} */\n        this.items = this._rawItems.map(function (item) {\n            return new Item(item);\n        });\n        // JSer カテゴリだけにする\n        /** @type {JSerPost[]} */\n        this.posts = this._rawPosts.filter(filterJSerCategory).map((post, index) => {\n            return new Post(index + 1, post);\n        });\n        /** @type {AlgoItem} */\n        this.algoItem = new AlgoItem(this.items);\n    }\n\n    /**\n     * 全部で何週あるかを返す(投稿記事の数と一致)\n     * @returns {number}\n     */\n    getTotalWeekCount() {\n        return this.posts.length;\n    }\n\n    /**\n     * beginからendの範囲のJSerItemの配列を返す\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerItem[]}\n     */\n    getItemsBetWeen(beginDate, endDate) {\n        return this.algoItem.findItemsBetween(beginDate, endDate);\n    }\n\n    /**\n     * 全てのJSerWeekの配列を返す\n     * @returns {JSerWeek[]}\n     */\n    getJSerWeeks() {\n        var results = [];\n        this.posts.reduce((currentPost, nextPost)=> {\n            var jserWeek = new Week(currentPost, nextPost, this.algoItem);\n            results.push(jserWeek);\n            return nextPost;\n        });\n        return results;\n    }\n\n    /**\n     * beginからendの範囲のJSerWeekの配列を返す\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerWeek[]}\n     */\n    getJSerWeeksBetWeen(beginDate, endDate) {\n        var results = [];\n        var algoPost = new AlgoPost(this.posts);\n        var posts = algoPost.findPostsBetween(beginDate, endDate);\n        posts.reduce((currentPost, nextPost)=> {\n            var jserWeek = new Week(currentPost, nextPost, this.algoItem);\n            results.push(jserWeek);\n            return nextPost;\n        });\n        return results;\n    }\n\n    /**\n     * JSer.info #xxx を返す\n     * @param {number} number number start with 1\n     * @returns {JSerWeek}\n     */\n    getJSerWeek(number) {\n        if (number <= 0) {\n            throw new Error(`number:${number} should be >= 1`);\n        }\n        if (number > this.posts.length) {\n            return null;\n        }\n        var targetPost = this.posts[number - 1];\n        var nextPost = this.posts[number];\n        return new Week(targetPost, nextPost, this.algoItem);\n    }\n}"
   },
   {
     "kind": "function",
@@ -113,12 +113,14 @@
     "longname": "src/JSerStat.js~JSerStat#items",
     "access": null,
     "description": null,
-    "lineNumber": 16,
-    "undocument": true,
+    "lineNumber": 17,
     "type": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
+        "JSerItem[]"
+      ],
+      "spread": false,
+      "description": null
     }
   },
   {
@@ -130,12 +132,14 @@
     "longname": "src/JSerStat.js~JSerStat#posts",
     "access": null,
     "description": null,
-    "lineNumber": 20,
-    "undocument": true,
+    "lineNumber": 22,
     "type": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
+        "JSerPost[]"
+      ],
+      "spread": false,
+      "description": null
     }
   },
   {
@@ -147,12 +151,14 @@
     "longname": "src/JSerStat.js~JSerStat#algoItem",
     "access": null,
     "description": null,
-    "lineNumber": 23,
-    "undocument": true,
+    "lineNumber": 26,
     "type": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
+        "AlgoItem"
+      ],
+      "spread": false,
+      "description": null
     }
   },
   {
@@ -164,7 +170,7 @@
     "longname": "src/JSerStat.js~JSerStat#getTotalWeekCount",
     "access": null,
     "description": "全部で何週あるかを返す(投稿記事の数と一致)",
-    "lineNumber": 30,
+    "lineNumber": 33,
     "unknown": [
       {
         "tagName": "@returns",
@@ -191,7 +197,7 @@
     "longname": "src/JSerStat.js~JSerStat#getItemsBetWeen",
     "access": null,
     "description": "beginからendの範囲のJSerItemの配列を返す",
-    "lineNumber": 40,
+    "lineNumber": 43,
     "unknown": [
       {
         "tagName": "@returns",
@@ -239,7 +245,7 @@
     "longname": "src/JSerStat.js~JSerStat#getJSerWeeks",
     "access": null,
     "description": "全てのJSerWeekの配列を返す",
-    "lineNumber": 48,
+    "lineNumber": 51,
     "unknown": [
       {
         "tagName": "@returns",
@@ -266,7 +272,7 @@
     "longname": "src/JSerStat.js~JSerStat#getJSerWeeksBetWeen",
     "access": null,
     "description": "beginからendの範囲のJSerWeekの配列を返す",
-    "lineNumber": 64,
+    "lineNumber": 67,
     "unknown": [
       {
         "tagName": "@returns",
@@ -314,7 +320,7 @@
     "longname": "src/JSerStat.js~JSerStat#getJSerWeek",
     "access": null,
     "description": "JSer.info #xxx を返す",
-    "lineNumber": 81,
+    "lineNumber": 84,
     "unknown": [
       {
         "tagName": "@returns",

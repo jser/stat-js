@@ -1,7 +1,7 @@
 {
-  "coverage": "61.53%",
+  "coverage": "67.3%",
   "expectCount": 52,
-  "actualCount": 32,
+  "actualCount": 35,
   "files": {
     "src/algo/AlgoItem.js": {
       "expectCount": 5,
@@ -25,7 +25,7 @@
     },
     "src/JSerStat.js": {
       "expectCount": 10,
-      "actualCount": 5
+      "actualCount": 8
     },
     "src/models/JSerWeek.js": {
       "expectCount": 7,

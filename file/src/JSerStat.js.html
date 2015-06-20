@@ -77,13 +77,16 @@ export default class JSerStat {
     constructor() {
         this._rawItems = require(&quot;../data/items.json&quot;);
         this._rawPosts = require(&quot;../data/posts.json&quot;);
+        /** @type {JSerItem[]} */
         this.items = this._rawItems.map(function (item) {
             return new Item(item);
         });
         // JSer &#x30AB;&#x30C6;&#x30B4;&#x30EA;&#x3060;&#x3051;&#x306B;&#x3059;&#x308B;
+        /** @type {JSerPost[]} */
         this.posts = this._rawPosts.filter(filterJSerCategory).map((post, index) =&gt; {
             return new Post(index + 1, post);
         });
+        /** @type {AlgoItem} */
         this.algoItem = new AlgoItem(this.items);
     }
 
