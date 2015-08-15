@@ -9,7 +9,7 @@
     "access": null,
     "description": null,
     "lineNumber": 2,
-    "content": "// LICENSE : MIT\n\"use strict\";\nimport Item from \"./models/JSerItem\"\nimport Post from \"./models/JSerPost\"\nimport Week from \"./models/JSerWeek\"\nimport AlgoItem from \"./algo/AlgoItem\"\nimport AlgoPost from \"./algo/AlgoPost.js\"\n\nfunction filterJSerCategory(article) {\n    return /jser/i.test(article.category);\n}\nexport default class JSerStat {\n    constructor() {\n        this._rawItems = require(\"../data/items.json\");\n        this._rawPosts = require(\"../data/posts.json\");\n        /** @type {JSerItem[]} */\n        this.items = this._rawItems.map(function (item) {\n            return new Item(item);\n        });\n        // JSer カテゴリだけにする\n        /** @type {JSerPost[]} */\n        this.posts = this._rawPosts.filter(filterJSerCategory).map((post, index) => {\n            return new Post(index + 1, post);\n        });\n        /** @type {AlgoItem} */\n        this.algoItem = new AlgoItem(this.items);\n    }\n\n    /**\n     * 全部で何週あるかを返す(投稿記事の数と一致)\n     * @returns {number}\n     */\n    getTotalWeekCount() {\n        return this.posts.length;\n    }\n\n    /**\n     * beginからendの範囲のJSerItemの配列を返す\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerItem[]}\n     */\n    getItemsBetWeen(beginDate, endDate) {\n        return this.algoItem.findItemsBetween(beginDate, endDate);\n    }\n\n    /**\n     * 全てのJSerWeekの配列を返す\n     * @returns {JSerWeek[]}\n     */\n    getJSerWeeks() {\n        var results = [];\n        this.posts.reduce((currentPost, nextPost)=> {\n            var jserWeek = new Week(currentPost, nextPost, this.algoItem);\n            results.push(jserWeek);\n            return nextPost;\n        });\n        return results;\n    }\n\n    /**\n     * beginからendの範囲のJSerWeekの配列を返す\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerWeek[]}\n     */\n    getJSerWeeksBetWeen(beginDate, endDate) {\n        var results = [];\n        var algoPost = new AlgoPost(this.posts);\n        var posts = algoPost.findPostsBetween(beginDate, endDate);\n        posts.reduce((currentPost, nextPost)=> {\n            var jserWeek = new Week(currentPost, nextPost, this.algoItem);\n            results.push(jserWeek);\n            return nextPost;\n        });\n        return results;\n    }\n\n    /**\n     * JSer.info #xxx を返す\n     * @param {number} number number start with 1\n     * @returns {JSerWeek}\n     */\n    getJSerWeek(number) {\n        if (number <= 0) {\n            throw new Error(`number:${number} should be >= 1`);\n        }\n        if (number > this.posts.length) {\n            return null;\n        }\n        var targetPost = this.posts[number - 1];\n        var nextPost = this.posts[number];\n        return new Week(targetPost, nextPost, this.algoItem);\n    }\n}"
+    "content": "// LICENSE : MIT\n\"use strict\";\nimport Item from \"./models/JSerItem\"\nimport Post from \"./models/JSerPost\"\nimport Week from \"./models/JSerWeek\"\nimport AlgoItem from \"./algo/AlgoItem\"\nimport AlgoPost from \"./algo/AlgoPost.js\"\n\nfunction filterJSerCategory(article) {\n    return /jser/i.test(article.category);\n}\nexport default class JSerStat {\n    constructor(rawItems, rawPosts) {\n        this._rawItems = rawItems || require(\"../data/items.json\");\n        this._rawPosts = rawPosts || require(\"../data/posts.json\");\n        /** @type {JSerItem[]} */\n        this.items = this._rawItems.map(function (item) {\n            return new Item(item);\n        });\n        // JSer カテゴリだけにする\n        /** @type {JSerPost[]} */\n        this.posts = this._rawPosts.filter(filterJSerCategory).map((post, index) => {\n            return new Post(index + 1, post);\n        });\n        /** @type {AlgoItem} */\n        this.algoItem = new AlgoItem(this.items);\n    }\n\n    /**\n     * 全部で何週あるかを返す(投稿記事の数と一致)\n     * @returns {number}\n     */\n    getTotalWeekCount() {\n        return this.posts.length;\n    }\n\n    /**\n     * beginからendの範囲のJSerItemの配列を返す\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerItem[]}\n     */\n    getItemsBetWeen(beginDate, endDate) {\n        return this.algoItem.findItemsBetween(beginDate, endDate);\n    }\n\n    /**\n     * 全てのJSerWeekの配列を返す\n     * @returns {JSerWeek[]}\n     */\n    getJSerWeeks() {\n        var results = [];\n        this.posts.reduce((currentPost, nextPost)=> {\n            var jserWeek = new Week(currentPost, nextPost, this.algoItem);\n            results.push(jserWeek);\n            return nextPost;\n        });\n        return results;\n    }\n\n    /**\n     * beginからendの範囲のJSerWeekの配列を返す\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerWeek[]}\n     */\n    getJSerWeeksBetWeen(beginDate, endDate) {\n        var results = [];\n        var algoPost = new AlgoPost(this.posts);\n        var posts = algoPost.findPostsBetween(beginDate, endDate);\n        posts.reduce((currentPost, nextPost)=> {\n            var jserWeek = new Week(currentPost, nextPost, this.algoItem);\n            results.push(jserWeek);\n            return nextPost;\n        });\n        return results;\n    }\n\n    /**\n     * JSer.info #xxx を返す\n     * @param {number} number number start with 1\n     * @returns {JSerWeek}\n     */\n    getJSerWeek(number) {\n        if (number <= 0) {\n            throw new Error(`number:${number} should be >= 1`);\n        }\n        if (number > this.posts.length) {\n            return null;\n        }\n        var targetPost = this.posts[number - 1];\n        var nextPost = this.posts[number];\n        return new Week(targetPost, nextPost, this.algoItem);\n    }\n}"
   },
   {
     "kind": "function",
@@ -67,7 +67,20 @@
     "description": null,
     "lineNumber": 13,
     "undocument": true,
-    "params": [],
+    "params": [
+      {
+        "name": "rawItems",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "rawPosts",
+        "types": [
+          "*"
+        ]
+      }
+    ],
     "generator": false
   },
   {
@@ -359,7 +372,7 @@
     "access": null,
     "description": null,
     "lineNumber": 2,
-    "content": "// LICENSE : MIT\n\"use strict\";\nimport {findIndexBiggerTime,findIndexLessTime} from \"./algoSearch.js\"\n\n// for algorithm\nexport default class AlgoItem {\n    /**\n     *\n     * @param {JSerItem[]} items\n     */\n    constructor(items) {\n        this.items = items;\n        /**\n         * @type number[] 昇順となった各Itemのtime配列\n         */\n        this.itemTimeIndex = items.map(function (item) {\n            return item.date.getTime();\n        });\n    }\n\n    /**\n     *\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerItem[]}\n     */\n    findItemsBetween(beginDate, endDate) {\n        var beginTime = beginDate.getTime();\n        var endTime = endDate.getTime();\n        var beginItemIndex = findIndexBiggerTime(this.itemTimeIndex, beginTime);\n        var endItemIndex = findIndexLessTime(this.itemTimeIndex, endTime);\n        // 範囲外なら空\n        if (beginItemIndex === -1 || endItemIndex === -1) {\n            return [];\n        }\n        //console.log(`${beginDate}@${endDate}`);\n        //console.log(`${beginItemIndex}@${endItemIndex}`);\n        if (beginItemIndex === endItemIndex) {\n            return [this.items[beginItemIndex]];\n        }\n        return this.items.slice(beginItemIndex, endItemIndex);\n    }\n\n}"
+    "content": "// LICENSE : MIT\n\"use strict\";\nimport {findIndexesBetween} from \"./algoSearch.js\"\n\n// for algorithm\nexport default class AlgoItem {\n    /**\n     *\n     * @param {JSerItem[]} items\n     */\n    constructor(items) {\n        this.items = items;\n        /**\n         * @type number[] 昇順となった各Itemのtime配列\n         */\n        this.itemTimes = items.map(function (item) {\n            return item.date.getTime();\n        });\n    }\n\n    /**\n     *\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerItem[]}\n     */\n    findItemsBetween(beginDate, endDate) {\n        return findIndexesBetween(this.itemTimes, beginDate, endDate).map(itemIndex => this.items[itemIndex]);\n    }\n}"
   },
   {
     "kind": "class",
@@ -422,9 +435,9 @@
     "kind": "member",
     "static": false,
     "variation": null,
-    "name": "itemTimeIndex",
+    "name": "itemTimes",
     "memberof": "src/algo/AlgoItem.js~AlgoItem",
-    "longname": "src/algo/AlgoItem.js~AlgoItem#itemTimeIndex",
+    "longname": "src/algo/AlgoItem.js~AlgoItem#itemTimes",
     "access": null,
     "description": null,
     "lineNumber": 16,
@@ -495,7 +508,7 @@
     "access": null,
     "description": null,
     "lineNumber": 2,
-    "content": "// LICENSE : MIT\n\"use strict\";\nimport {findIndexBiggerTime,findIndexLessTime} from \"./algoSearch.js\"\n\n// for algorithm\nexport default class AlgoPost {\n    /**\n     *\n     * @param {JSerPost[]} posts\n     */\n    constructor(posts) {\n        this.posts = posts;\n        /**\n         * @type number[] 昇順となった各Postのtime配列\n         */\n        this.postTimeIndex = posts.map(function (post) {\n            return post.date.getTime();\n        });\n    }\n\n    /**\n     *\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerPost[]}\n     */\n    findPostsBetween(beginDate, endDate) {\n        var beginTime = beginDate.getTime();\n        var endTime = endDate.getTime();\n        var beginItemIndex = findIndexBiggerTime(this.postTimeIndex, beginTime);\n        var endItemIndex = findIndexLessTime(this.postTimeIndex, endTime);\n        // 範囲外なら空\n        if (beginItemIndex === -1 || endItemIndex === -1) {\n            return [];\n        }\n        if (beginItemIndex === endItemIndex) {\n            return [this.posts[beginItemIndex]];\n        }\n        return this.posts.slice(beginItemIndex, endItemIndex);\n    }\n\n}"
+    "content": "// LICENSE : MIT\n\"use strict\";\nimport {findIndexesBetween} from \"./algoSearch.js\"\n\n// for algorithm\nexport default class AlgoPost {\n    /**\n     *\n     * @param {JSerPost[]} posts\n     */\n    constructor(posts) {\n        this.posts = posts;\n        /**\n         * @type number[] 昇順となった各Postのtime配列\n         */\n        this.postTimeIndex = posts.map(function (post) {\n            return post.date.getTime();\n        });\n    }\n\n    /**\n     *\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerPost[]}\n     */\n    findPostsBetween(beginDate, endDate) {\n        return findIndexesBetween(this.postTimeIndex, beginDate, endDate).map(itemIndex => this.posts[itemIndex]);\n    }\n\n}"
   },
   {
     "kind": "class",
@@ -631,7 +644,48 @@
     "access": null,
     "description": null,
     "lineNumber": 2,
-    "content": "// LICENSE : MIT\n\"use strict\";\nexport function findIndexBiggerTime(array, time) {\n    var currentIndex = 0;\n    for (var i = currentIndex; i < array.length; i++) {\n        var comparedTime = array[i];\n        if (time >= comparedTime) {\n            currentIndex = i;\n        } else {\n            // timeより大きいものが出てきたら直前のものを返す\n            return currentIndex;\n        }\n    }\n    return -1\n}\n\nexport function findIndexLessTime(array, time) {\n    var currentIndex = array.length - 1;\n    for (var i = currentIndex; i >= 0; i--) {\n        var comparedTime = array[i];\n        if (time < comparedTime) {\n            currentIndex = i;\n        } else {\n            // timeよりも小さいものが出てきたら直前のものを返す\n            return currentIndex;\n        }\n    }\n    return -1;\n}\n\nfunction compare_number(a, b) {\n    return a - b;\n}"
+    "content": "// LICENSE : MIT\n\"use strict\";\nexport function findIndexesBetween(times, beginDate, endDate) {\n    var beginTime = beginDate.getTime();\n    var endTime = endDate.getTime();\n    return times.reduce((indexes, time, index) => {\n        if (beginTime <= time && time <= endTime) {\n            indexes.push(index);\n        }\n        return indexes;\n    }, []);\n}\nexport function findIndexBiggerTime(array, time) {\n    var currentIndex = 0;\n    for (var i = currentIndex; i < array.length; i++) {\n        var comparedTime = array[i];\n        if (time >= comparedTime) {\n            currentIndex = i;\n        } else {\n            // timeより大きいものが出てきたら直前のものを返す\n            return currentIndex;\n        }\n    }\n    return -1\n}\n\nexport function findIndexLessTime(array, time) {\n    var currentIndex = array.length - 1;\n    for (var i = currentIndex; i >= 0; i--) {\n        var comparedTime = array[i];\n        if (time < comparedTime) {\n            currentIndex = i;\n        } else {\n            // timeよりも小さいものが出てきたら直前のものを返す\n            return currentIndex;\n        }\n    }\n    return -1;\n}\n\nfunction compare_number(a, b) {\n    return a - b;\n}"
+  },
+  {
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "findIndexesBetween",
+    "memberof": "src/algo/algoSearch.js",
+    "longname": "src/algo/algoSearch.js~findIndexesBetween",
+    "access": null,
+    "export": true,
+    "importPath": "jser-stat/src/algo/algoSearch.js",
+    "importStyle": "{findIndexesBetween}",
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "params": [
+      {
+        "name": "times",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "beginDate",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "endDate",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
   },
   {
     "kind": "function",
@@ -645,7 +699,7 @@
     "importPath": "jser-stat/src/algo/algoSearch.js",
     "importStyle": "{findIndexBiggerTime}",
     "description": null,
-    "lineNumber": 3,
+    "lineNumber": 13,
     "undocument": true,
     "params": [
       {
@@ -680,7 +734,7 @@
     "importPath": "jser-stat/src/algo/algoSearch.js",
     "importStyle": "{findIndexLessTime}",
     "description": null,
-    "lineNumber": 17,
+    "lineNumber": 27,
     "undocument": true,
     "params": [
       {
@@ -715,7 +769,7 @@
     "importPath": "jser-stat/src/algo/algoSearch.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 31,
+    "lineNumber": 41,
     "undocument": true,
     "params": [
       {

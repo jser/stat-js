@@ -66,6 +66,12 @@ window.esdocSearchIndex = [
     "function"
   ],
   [
+    "jser-stat/src/algo/algosearch.js~findindexesbetween",
+    "function/index.html#static-function-findIndexesBetween",
+    "<span>findIndexesBetween</span> <span class=\"search-result-import-path\">jser-stat/src/algo/algoSearch.js</span>",
+    "function"
+  ],
+  [
     "builtinexternal/ecmascriptexternal.js~array",
     "external/index.html",
     "BuiltinExternal/ECMAScriptExternal.js~Array",
@@ -468,9 +474,9 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/algo/algoitem.js~algoitem#itemtimeindex",
-    "class/src/algo/AlgoItem.js~AlgoItem.html#instance-member-itemTimeIndex",
-    "src/algo/AlgoItem.js~AlgoItem#itemTimeIndex",
+    "src/algo/algoitem.js~algoitem#itemtimes",
+    "class/src/algo/AlgoItem.js~AlgoItem.html#instance-member-itemTimes",
+    "src/algo/AlgoItem.js~AlgoItem#itemTimes",
     "member"
   ],
   [

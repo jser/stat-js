@@ -1,6 +1,6 @@
 {
-  "coverage": "67.3%",
-  "expectCount": 52,
+  "coverage": "66.03%",
+  "expectCount": 53,
   "actualCount": 35,
   "files": {
     "src/algo/AlgoItem.js": {
@@ -36,7 +36,7 @@
       "actualCount": 1
     },
     "src/algo/algoSearch.js": {
-      "expectCount": 2,
+      "expectCount": 3,
       "actualCount": 0
     }
   }
