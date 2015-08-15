@@ -65,6 +65,7 @@
 <div class="content" data-ice="content"><h1 data-ice="title">src/models/JSerItem.js</h1>
 <pre class="source-code line-number"><code class="prettyprint linenums" data-ice="content">// LICENSE : MIT
 &quot;use strict&quot;;
+import assert from &quot;assert&quot;
 import RelatedLink from &quot;./JSerItemRelatedLink&quot;
 export default class JSerItem {
     constructor(item) {
@@ -83,6 +84,15 @@ export default class JSerItem {
         this.relatedLinks = relatedLinks.map(function (link) {
             return new RelatedLink(link);
         });
+    }
+
+    /**
+     * @param {JSerItem} item
+     * @returns {boolean}
+     */
+    isEqualItem(item) {
+        assert(item != null, &quot;item should not be null&quot;);
+        return this.url === item.url;
     }
 }</code></pre>
 </div>

@@ -65,6 +65,8 @@
 <div class="content" data-ice="content"><h1 data-ice="title">src/JSerStat.js</h1>
 <pre class="source-code line-number"><code class="prettyprint linenums" data-ice="content">// LICENSE : MIT
 &quot;use strict&quot;;
+require(&apos;array.prototype.find&apos;);
+
 import Item from &quot;./models/JSerItem&quot;
 import Post from &quot;./models/JSerPost&quot;
 import Week from &quot;./models/JSerWeek&quot;
@@ -87,8 +89,16 @@ export default class JSerStat {
         this.posts = this._rawPosts.filter(filterJSerCategory).map((post, index) =&gt; {
             return new Post(index + 1, post);
         });
-        /** @type {AlgoItem} */
-        this.algoItem = new AlgoItem(this.items);
+        /**
+         *  @type {AlgoItem}
+         *  @private
+         **/
+        this._algoItem = new AlgoItem(this.items);
+        /**
+         * @type {AlgoPost}
+         * @private
+         */
+        this._algoPost = new AlgoPost(this.posts);
     }
 
     /**
@@ -105,8 +115,13 @@ export default class JSerStat {
      * @param {Date} endDate
      * @returns {JSerItem[]}
      */
+    findItemsBetween(beginDate, endDate) {
+        return this._algoItem.findItemsBetween(beginDate, endDate);
+    }
+
+    // deprecated
     getItemsBetWeen(beginDate, endDate) {
-        return this.algoItem.findItemsBetween(beginDate, endDate);
+        return this.findItemsBetween(beginDate, endDate)
     }
 
     /**
@@ -114,13 +129,12 @@ export default class JSerStat {
      * @returns {JSerWeek[]}
      */
     getJSerWeeks() {
-        var results = [];
-        this.posts.reduce((currentPost, nextPost)=&gt; {
-            var jserWeek = new Week(currentPost, nextPost, this.algoItem);
+        return this.posts.reduce((results, currentPost, index)=&gt; {
+            var prevPost = this.posts[index - 1];
+            var jserWeek = new Week(currentPost, prevPost, this._algoItem);
             results.push(jserWeek);
-            return nextPost;
-        });
-        return results;
+            return results;
+        }, []);
     }
 
     /**
@@ -129,16 +143,20 @@ export default class JSerStat {
      * @param {Date} endDate
      * @returns {JSerWeek[]}
      */
-    getJSerWeeksBetWeen(beginDate, endDate) {
-        var results = [];
-        var algoPost = new AlgoPost(this.posts);
+    findJSerWeeksBetween(beginDate, endDate) {
+        var algoPost = this._algoPost;
         var posts = algoPost.findPostsBetween(beginDate, endDate);
-        posts.reduce((currentPost, nextPost)=&gt; {
-            var jserWeek = new Week(currentPost, nextPost, this.algoItem);
+        return posts.reduce((results, currentPost, index)=&gt; {
+            var prevPost = this.posts[index - 1];
+            var jserWeek = new Week(currentPost, prevPost, this._algoItem);
             results.push(jserWeek);
-            return nextPost;
-        });
-        return results;
+            return results;
+        }, []);
+    }
+
+    // deprecated
+    getJSerWeeksBetWeen(beginDate, endDate) {
+        return this.findJSerWeeksBetween(beginDate, endDate)
     }
 
     /**
@@ -146,7 +164,7 @@ export default class JSerStat {
      * @param {number} number number start with 1
      * @returns {JSerWeek}
      */
-    getJSerWeek(number) {
+    findJSerWeek(number) {
         if (number &lt;= 0) {
             throw new Error(`number:${number} should be &gt;= 1`);
         }
@@ -154,8 +172,39 @@ export default class JSerStat {
             return null;
         }
         var targetPost = this.posts[number - 1];
-        var nextPost = this.posts[number];
-        return new Week(targetPost, nextPost, this.algoItem);
+        var prevPost = this.posts[number - 2];
+        return new Week(targetPost, prevPost, this._algoItem);
+    }
+
+    // deprecated
+    getJSerWeek(number) {
+        return this.findJSerWeek(number);
+    }
+
+    /**
+     * JSerItem&#x3092;&#x542B;&#x3093;&#x3067;&#x3044;&#x308B;JSerWeek&#x3092;&#x691C;&#x7D22;&#x3057;&#x3066;&#x8FD4;&#x3059;.
+     * @param {Object} jserItem the jserItem is raw object for JSerItem
+     * @return {JSerWeek} The week contain this jserItem.
+     */
+    findWeekWithItem(jserItem) {
+        var targetItem = new Item(jserItem);
+        var jSerWeeks = this.getJSerWeeks();
+        return jSerWeeks.find(week =&gt; {
+            return week.items.some(item =&gt; {
+                return targetItem.isEqualItem(item);
+            });
+        });
+    }
+
+    /**
+     * URL&#x3068;&#x30DE;&#x30C3;&#x30C1;&#x3059;&#x308B;JSerItem&#x3092;&#x8FD4;&#x3059;
+     * @param {string} URL
+     * @return {JSerItem}
+     */
+    findItemWithURL(URL) {
+        return this.items.find(item =&gt; {
+            return item.url === URL;
+        });
     }
 }</code></pre>
 </div>

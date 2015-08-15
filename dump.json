@@ -9,7 +9,7 @@
     "access": null,
     "description": null,
     "lineNumber": 2,
-    "content": "// LICENSE : MIT\n\"use strict\";\nimport Item from \"./models/JSerItem\"\nimport Post from \"./models/JSerPost\"\nimport Week from \"./models/JSerWeek\"\nimport AlgoItem from \"./algo/AlgoItem\"\nimport AlgoPost from \"./algo/AlgoPost.js\"\n\nfunction filterJSerCategory(article) {\n    return /jser/i.test(article.category);\n}\nexport default class JSerStat {\n    constructor(rawItems, rawPosts) {\n        this._rawItems = rawItems || require(\"../data/items.json\");\n        this._rawPosts = rawPosts || require(\"../data/posts.json\");\n        /** @type {JSerItem[]} */\n        this.items = this._rawItems.map(function (item) {\n            return new Item(item);\n        });\n        // JSer カテゴリだけにする\n        /** @type {JSerPost[]} */\n        this.posts = this._rawPosts.filter(filterJSerCategory).map((post, index) => {\n            return new Post(index + 1, post);\n        });\n        /** @type {AlgoItem} */\n        this.algoItem = new AlgoItem(this.items);\n    }\n\n    /**\n     * 全部で何週あるかを返す(投稿記事の数と一致)\n     * @returns {number}\n     */\n    getTotalWeekCount() {\n        return this.posts.length;\n    }\n\n    /**\n     * beginからendの範囲のJSerItemの配列を返す\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerItem[]}\n     */\n    getItemsBetWeen(beginDate, endDate) {\n        return this.algoItem.findItemsBetween(beginDate, endDate);\n    }\n\n    /**\n     * 全てのJSerWeekの配列を返す\n     * @returns {JSerWeek[]}\n     */\n    getJSerWeeks() {\n        var results = [];\n        this.posts.reduce((currentPost, nextPost)=> {\n            var jserWeek = new Week(currentPost, nextPost, this.algoItem);\n            results.push(jserWeek);\n            return nextPost;\n        });\n        return results;\n    }\n\n    /**\n     * beginからendの範囲のJSerWeekの配列を返す\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerWeek[]}\n     */\n    getJSerWeeksBetWeen(beginDate, endDate) {\n        var results = [];\n        var algoPost = new AlgoPost(this.posts);\n        var posts = algoPost.findPostsBetween(beginDate, endDate);\n        posts.reduce((currentPost, nextPost)=> {\n            var jserWeek = new Week(currentPost, nextPost, this.algoItem);\n            results.push(jserWeek);\n            return nextPost;\n        });\n        return results;\n    }\n\n    /**\n     * JSer.info #xxx を返す\n     * @param {number} number number start with 1\n     * @returns {JSerWeek}\n     */\n    getJSerWeek(number) {\n        if (number <= 0) {\n            throw new Error(`number:${number} should be >= 1`);\n        }\n        if (number > this.posts.length) {\n            return null;\n        }\n        var targetPost = this.posts[number - 1];\n        var nextPost = this.posts[number];\n        return new Week(targetPost, nextPost, this.algoItem);\n    }\n}"
+    "content": "// LICENSE : MIT\n\"use strict\";\nrequire('array.prototype.find');\n\nimport Item from \"./models/JSerItem\"\nimport Post from \"./models/JSerPost\"\nimport Week from \"./models/JSerWeek\"\nimport AlgoItem from \"./algo/AlgoItem\"\nimport AlgoPost from \"./algo/AlgoPost.js\"\n\nfunction filterJSerCategory(article) {\n    return /jser/i.test(article.category);\n}\nexport default class JSerStat {\n    constructor(rawItems, rawPosts) {\n        this._rawItems = rawItems || require(\"../data/items.json\");\n        this._rawPosts = rawPosts || require(\"../data/posts.json\");\n        /** @type {JSerItem[]} */\n        this.items = this._rawItems.map(function (item) {\n            return new Item(item);\n        });\n        // JSer カテゴリだけにする\n        /** @type {JSerPost[]} */\n        this.posts = this._rawPosts.filter(filterJSerCategory).map((post, index) => {\n            return new Post(index + 1, post);\n        });\n        /**\n         *  @type {AlgoItem}\n         *  @private\n         **/\n        this._algoItem = new AlgoItem(this.items);\n        /**\n         * @type {AlgoPost}\n         * @private\n         */\n        this._algoPost = new AlgoPost(this.posts);\n    }\n\n    /**\n     * 全部で何週あるかを返す(投稿記事の数と一致)\n     * @returns {number}\n     */\n    getTotalWeekCount() {\n        return this.posts.length;\n    }\n\n    /**\n     * beginからendの範囲のJSerItemの配列を返す\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerItem[]}\n     */\n    findItemsBetween(beginDate, endDate) {\n        return this._algoItem.findItemsBetween(beginDate, endDate);\n    }\n\n    // deprecated\n    getItemsBetWeen(beginDate, endDate) {\n        return this.findItemsBetween(beginDate, endDate)\n    }\n\n    /**\n     * 全てのJSerWeekの配列を返す\n     * @returns {JSerWeek[]}\n     */\n    getJSerWeeks() {\n        return this.posts.reduce((results, currentPost, index)=> {\n            var prevPost = this.posts[index - 1];\n            var jserWeek = new Week(currentPost, prevPost, this._algoItem);\n            results.push(jserWeek);\n            return results;\n        }, []);\n    }\n\n    /**\n     * beginからendの範囲のJSerWeekの配列を返す\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerWeek[]}\n     */\n    findJSerWeeksBetween(beginDate, endDate) {\n        var algoPost = this._algoPost;\n        var posts = algoPost.findPostsBetween(beginDate, endDate);\n        return posts.reduce((results, currentPost, index)=> {\n            var prevPost = this.posts[index - 1];\n            var jserWeek = new Week(currentPost, prevPost, this._algoItem);\n            results.push(jserWeek);\n            return results;\n        }, []);\n    }\n\n    // deprecated\n    getJSerWeeksBetWeen(beginDate, endDate) {\n        return this.findJSerWeeksBetween(beginDate, endDate)\n    }\n\n    /**\n     * JSer.info #xxx を返す\n     * @param {number} number number start with 1\n     * @returns {JSerWeek}\n     */\n    findJSerWeek(number) {\n        if (number <= 0) {\n            throw new Error(`number:${number} should be >= 1`);\n        }\n        if (number > this.posts.length) {\n            return null;\n        }\n        var targetPost = this.posts[number - 1];\n        var prevPost = this.posts[number - 2];\n        return new Week(targetPost, prevPost, this._algoItem);\n    }\n\n    // deprecated\n    getJSerWeek(number) {\n        return this.findJSerWeek(number);\n    }\n\n    /**\n     * JSerItemを含んでいるJSerWeekを検索して返す.\n     * @param {Object} jserItem the jserItem is raw object for JSerItem\n     * @return {JSerWeek} The week contain this jserItem.\n     */\n    findWeekWithItem(jserItem) {\n        var targetItem = new Item(jserItem);\n        var jSerWeeks = this.getJSerWeeks();\n        return jSerWeeks.find(week => {\n            return week.items.some(item => {\n                return targetItem.isEqualItem(item);\n            });\n        });\n    }\n\n    /**\n     * URLとマッチするJSerItemを返す\n     * @param {string} URL\n     * @return {JSerItem}\n     */\n    findItemWithURL(URL) {\n        return this.items.find(item => {\n            return item.url === URL;\n        });\n    }\n}"
   },
   {
     "kind": "function",
@@ -23,7 +23,7 @@
     "importPath": "jser-stat/src/JSerStat.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 9,
+    "lineNumber": 11,
     "undocument": true,
     "params": [
       {
@@ -52,7 +52,7 @@
     "importPath": "jser-stat/src/JSerStat.js",
     "importStyle": "JSerStat",
     "description": null,
-    "lineNumber": 12,
+    "lineNumber": 14,
     "undocument": true,
     "interface": false
   },
@@ -65,7 +65,7 @@
     "longname": "src/JSerStat.js~JSerStat#constructor",
     "access": null,
     "description": null,
-    "lineNumber": 13,
+    "lineNumber": 15,
     "undocument": true,
     "params": [
       {
@@ -92,7 +92,7 @@
     "longname": "src/JSerStat.js~JSerStat#_rawItems",
     "access": null,
     "description": null,
-    "lineNumber": 14,
+    "lineNumber": 16,
     "undocument": true,
     "type": {
       "types": [
@@ -109,7 +109,7 @@
     "longname": "src/JSerStat.js~JSerStat#_rawPosts",
     "access": null,
     "description": null,
-    "lineNumber": 15,
+    "lineNumber": 17,
     "undocument": true,
     "type": {
       "types": [
@@ -126,7 +126,7 @@
     "longname": "src/JSerStat.js~JSerStat#items",
     "access": null,
     "description": null,
-    "lineNumber": 17,
+    "lineNumber": 19,
     "type": {
       "nullable": null,
       "types": [
@@ -145,7 +145,7 @@
     "longname": "src/JSerStat.js~JSerStat#posts",
     "access": null,
     "description": null,
-    "lineNumber": 22,
+    "lineNumber": 24,
     "type": {
       "nullable": null,
       "types": [
@@ -159,16 +159,32 @@
     "kind": "member",
     "static": false,
     "variation": null,
-    "name": "algoItem",
+    "name": "_algoItem",
     "memberof": "src/JSerStat.js~JSerStat",
-    "longname": "src/JSerStat.js~JSerStat#algoItem",
+    "longname": "src/JSerStat.js~JSerStat#_algoItem",
     "access": null,
+    "description": " @type {AlgoItem}\n @private",
+    "lineNumber": 31,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "_algoPost",
+    "memberof": "src/JSerStat.js~JSerStat",
+    "longname": "src/JSerStat.js~JSerStat#_algoPost",
+    "access": "private",
     "description": null,
-    "lineNumber": 26,
+    "lineNumber": 36,
     "type": {
       "nullable": null,
       "types": [
-        "AlgoItem"
+        "AlgoPost"
       ],
       "spread": false,
       "description": null
@@ -183,7 +199,7 @@
     "longname": "src/JSerStat.js~JSerStat#getTotalWeekCount",
     "access": null,
     "description": "全部で何週あるかを返す(投稿記事の数と一致)",
-    "lineNumber": 33,
+    "lineNumber": 43,
     "unknown": [
       {
         "tagName": "@returns",
@@ -205,12 +221,12 @@
     "kind": "method",
     "static": false,
     "variation": null,
-    "name": "getItemsBetWeen",
+    "name": "findItemsBetween",
     "memberof": "src/JSerStat.js~JSerStat",
-    "longname": "src/JSerStat.js~JSerStat#getItemsBetWeen",
+    "longname": "src/JSerStat.js~JSerStat#findItemsBetween",
     "access": null,
     "description": "beginからendの範囲のJSerItemの配列を返す",
-    "lineNumber": 43,
+    "lineNumber": 53,
     "unknown": [
       {
         "tagName": "@returns",
@@ -253,12 +269,44 @@
     "kind": "method",
     "static": false,
     "variation": null,
+    "name": "getItemsBetWeen",
+    "memberof": "src/JSerStat.js~JSerStat",
+    "longname": "src/JSerStat.js~JSerStat#getItemsBetWeen",
+    "access": null,
+    "description": null,
+    "lineNumber": 58,
+    "undocument": true,
+    "params": [
+      {
+        "name": "beginDate",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "endDate",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "kind": "method",
+    "static": false,
+    "variation": null,
     "name": "getJSerWeeks",
     "memberof": "src/JSerStat.js~JSerStat",
     "longname": "src/JSerStat.js~JSerStat#getJSerWeeks",
     "access": null,
     "description": "全てのJSerWeekの配列を返す",
-    "lineNumber": 51,
+    "lineNumber": 66,
     "unknown": [
       {
         "tagName": "@returns",
@@ -280,12 +328,12 @@
     "kind": "method",
     "static": false,
     "variation": null,
-    "name": "getJSerWeeksBetWeen",
+    "name": "findJSerWeeksBetween",
     "memberof": "src/JSerStat.js~JSerStat",
-    "longname": "src/JSerStat.js~JSerStat#getJSerWeeksBetWeen",
+    "longname": "src/JSerStat.js~JSerStat#findJSerWeeksBetween",
     "access": null,
     "description": "beginからendの範囲のJSerWeekの配列を返す",
-    "lineNumber": 67,
+    "lineNumber": 81,
     "unknown": [
       {
         "tagName": "@returns",
@@ -328,12 +376,44 @@
     "kind": "method",
     "static": false,
     "variation": null,
-    "name": "getJSerWeek",
+    "name": "getJSerWeeksBetWeen",
     "memberof": "src/JSerStat.js~JSerStat",
-    "longname": "src/JSerStat.js~JSerStat#getJSerWeek",
+    "longname": "src/JSerStat.js~JSerStat#getJSerWeeksBetWeen",
+    "access": null,
+    "description": null,
+    "lineNumber": 93,
+    "undocument": true,
+    "params": [
+      {
+        "name": "beginDate",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "endDate",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "findJSerWeek",
+    "memberof": "src/JSerStat.js~JSerStat",
+    "longname": "src/JSerStat.js~JSerStat#findJSerWeek",
     "access": null,
     "description": "JSer.info #xxx を返す",
-    "lineNumber": 84,
+    "lineNumber": 102,
     "unknown": [
       {
         "tagName": "@returns",
@@ -356,6 +436,96 @@
       "nullable": null,
       "types": [
         "JSerWeek"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "getJSerWeek",
+    "memberof": "src/JSerStat.js~JSerStat",
+    "longname": "src/JSerStat.js~JSerStat#getJSerWeek",
+    "access": null,
+    "description": null,
+    "lineNumber": 115,
+    "undocument": true,
+    "params": [
+      {
+        "name": "number",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "findWeekWithItem",
+    "memberof": "src/JSerStat.js~JSerStat",
+    "longname": "src/JSerStat.js~JSerStat#findWeekWithItem",
+    "access": null,
+    "description": "JSerItemを含んでいるJSerWeekを検索して返す.",
+    "lineNumber": 124,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "jserItem",
+        "description": "the jserItem is raw object for JSerItem"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "JSerWeek"
+      ],
+      "spread": false,
+      "description": "The week contain this jserItem."
+    },
+    "generator": false
+  },
+  {
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "findItemWithURL",
+    "memberof": "src/JSerStat.js~JSerStat",
+    "longname": "src/JSerStat.js~JSerStat#findItemWithURL",
+    "access": null,
+    "description": "URLとマッチするJSerItemを返す",
+    "lineNumber": 139,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "URL",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "JSerItem"
       ],
       "spread": false,
       "description": ""
@@ -902,7 +1072,7 @@
     "access": null,
     "description": null,
     "lineNumber": 2,
-    "content": "// LICENSE : MIT\n\"use strict\";\nimport RelatedLink from \"./JSerItemRelatedLink\"\nexport default class JSerItem {\n    constructor(item) {\n        /** @type {string} */\n        this.title = item[\"title\"];\n        /** @type {string} */\n        this.url = item[\"url\"];\n        /** @type {string} */\n        this.content = item[\"content\"];\n        /** @type {string[]} */\n        this.tags = item[\"tags\"] || [];\n        /** @type {Date} */\n        this.date = new Date(item[\"date\"]);\n        var relatedLinks = item[\"relatedLinks\"] || [];\n        /** @type {JSerItemRelatedLink[]} */\n        this.relatedLinks = relatedLinks.map(function (link) {\n            return new RelatedLink(link);\n        });\n    }\n}"
+    "content": "// LICENSE : MIT\n\"use strict\";\nimport assert from \"assert\"\nimport RelatedLink from \"./JSerItemRelatedLink\"\nexport default class JSerItem {\n    constructor(item) {\n        /** @type {string} */\n        this.title = item[\"title\"];\n        /** @type {string} */\n        this.url = item[\"url\"];\n        /** @type {string} */\n        this.content = item[\"content\"];\n        /** @type {string[]} */\n        this.tags = item[\"tags\"] || [];\n        /** @type {Date} */\n        this.date = new Date(item[\"date\"]);\n        var relatedLinks = item[\"relatedLinks\"] || [];\n        /** @type {JSerItemRelatedLink[]} */\n        this.relatedLinks = relatedLinks.map(function (link) {\n            return new RelatedLink(link);\n        });\n    }\n\n    /**\n     * @param {JSerItem} item\n     * @returns {boolean}\n     */\n    isEqualItem(item) {\n        assert(item != null, \"item should not be null\");\n        return this.url === item.url;\n    }\n}"
   },
   {
     "kind": "class",
@@ -916,7 +1086,7 @@
     "importPath": "jser-stat/src/models/JSerItem.js",
     "importStyle": "JSerItem",
     "description": null,
-    "lineNumber": 4,
+    "lineNumber": 5,
     "undocument": true,
     "interface": false
   },
@@ -929,7 +1099,7 @@
     "longname": "src/models/JSerItem.js~JSerItem#constructor",
     "access": null,
     "description": null,
-    "lineNumber": 5,
+    "lineNumber": 6,
     "undocument": true,
     "params": [
       {
@@ -950,7 +1120,7 @@
     "longname": "src/models/JSerItem.js~JSerItem#title",
     "access": null,
     "description": null,
-    "lineNumber": 7,
+    "lineNumber": 8,
     "type": {
       "nullable": null,
       "types": [
@@ -969,7 +1139,7 @@
     "longname": "src/models/JSerItem.js~JSerItem#url",
     "access": null,
     "description": null,
-    "lineNumber": 9,
+    "lineNumber": 10,
     "type": {
       "nullable": null,
       "types": [
@@ -988,7 +1158,7 @@
     "longname": "src/models/JSerItem.js~JSerItem#content",
     "access": null,
     "description": null,
-    "lineNumber": 11,
+    "lineNumber": 12,
     "type": {
       "nullable": null,
       "types": [
@@ -1007,7 +1177,7 @@
     "longname": "src/models/JSerItem.js~JSerItem#tags",
     "access": null,
     "description": null,
-    "lineNumber": 13,
+    "lineNumber": 14,
     "type": {
       "nullable": null,
       "types": [
@@ -1026,7 +1196,7 @@
     "longname": "src/models/JSerItem.js~JSerItem#date",
     "access": null,
     "description": null,
-    "lineNumber": 15,
+    "lineNumber": 16,
     "type": {
       "nullable": null,
       "types": [
@@ -1045,7 +1215,7 @@
     "longname": "src/models/JSerItem.js~JSerItem#relatedLinks",
     "access": null,
     "description": null,
-    "lineNumber": 18,
+    "lineNumber": 19,
     "type": {
       "nullable": null,
       "types": [
@@ -1054,6 +1224,44 @@
       "spread": false,
       "description": null
     }
+  },
+  {
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "isEqualItem",
+    "memberof": "src/models/JSerItem.js~JSerItem",
+    "longname": "src/models/JSerItem.js~JSerItem#isEqualItem",
+    "access": null,
+    "description": null,
+    "lineNumber": 28,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{boolean}"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "JSerItem"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "item",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "boolean"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
   },
   {
     "kind": "file",
@@ -1340,7 +1548,7 @@
     "access": null,
     "description": null,
     "lineNumber": 2,
-    "content": "// LICENSE : MIT\n\"use strict\";\nexport default class JSerWeek {\n    constructor(currentPost, nextPost, algoItem) {\n        /** @type {number} */\n        this.weekNumber = currentPost.postNumber;\n        /** @type {Date} */\n        this.beginDate = currentPost.date;\n        /** @type {Date} */\n        this.endDate = nextPost ? nextPost.date : null;\n        /** @type {JSerPost} */\n        this.post = currentPost;\n        /** @type {JSerItem[]} */\n        this.items = algoItem.findItemsBetween(this.beginDate, this.endDate || new Date());\n    }\n}"
+    "content": "// LICENSE : MIT\n\"use strict\";\nexport default class JSerWeek {\n    constructor(currentPost, prevPost, algoItem) {\n        /** @type {number} */\n        this.weekNumber = currentPost.postNumber;\n        /** @type {Date} */\n        this.beginDate = prevPost ? prevPost.date : null;\n        /** @type {Date} */\n        this.endDate = currentPost.date;\n        /** @type {JSerPost} */\n        this.post = currentPost;\n        var pastDate = new Date(1995, 11, 17);\n        /** @type {JSerItem[]} */\n        this.items = algoItem.findItemsBetween(this.beginDate || pastDate, this.endDate);\n    }\n}"
   },
   {
     "kind": "class",
@@ -1377,7 +1585,7 @@
         ]
       },
       {
-        "name": "nextPost",
+        "name": "prevPost",
         "types": [
           "*"
         ]
@@ -1476,7 +1684,7 @@
     "longname": "src/models/JSerWeek.js~JSerWeek#items",
     "access": null,
     "description": null,
-    "lineNumber": 14,
+    "lineNumber": 15,
     "type": {
       "nullable": null,
       "types": [

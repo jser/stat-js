@@ -1,7 +1,7 @@
 {
-  "coverage": "66.03%",
-  "expectCount": 53,
-  "actualCount": 35,
+  "coverage": "63.79%",
+  "expectCount": 58,
+  "actualCount": 37,
   "files": {
     "src/algo/AlgoItem.js": {
       "expectCount": 5,
@@ -12,8 +12,8 @@
       "actualCount": 3
     },
     "src/models/JSerItem.js": {
-      "expectCount": 8,
-      "actualCount": 6
+      "expectCount": 9,
+      "actualCount": 7
     },
     "src/models/JSerItemRelatedLink.js": {
       "expectCount": 4,
@@ -24,8 +24,8 @@
       "actualCount": 7
     },
     "src/JSerStat.js": {
-      "expectCount": 10,
-      "actualCount": 8
+      "expectCount": 14,
+      "actualCount": 9
     },
     "src/models/JSerWeek.js": {
       "expectCount": 7,

@@ -402,15 +402,39 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
-    "src/jserstat.js~jserstat#algoitem",
-    "class/src/JSerStat.js~JSerStat.html#instance-member-algoItem",
-    "src/JSerStat.js~JSerStat#algoItem",
-    "member"
-  ],
-  [
     "src/jserstat.js~jserstat#constructor",
     "class/src/JSerStat.js~JSerStat.html#instance-constructor-constructor",
     "src/JSerStat.js~JSerStat#constructor",
+    "method"
+  ],
+  [
+    "src/jserstat.js~jserstat#finditemwithurl",
+    "class/src/JSerStat.js~JSerStat.html#instance-method-findItemWithURL",
+    "src/JSerStat.js~JSerStat#findItemWithURL",
+    "method"
+  ],
+  [
+    "src/jserstat.js~jserstat#finditemsbetween",
+    "class/src/JSerStat.js~JSerStat.html#instance-method-findItemsBetween",
+    "src/JSerStat.js~JSerStat#findItemsBetween",
+    "method"
+  ],
+  [
+    "src/jserstat.js~jserstat#findjserweek",
+    "class/src/JSerStat.js~JSerStat.html#instance-method-findJSerWeek",
+    "src/JSerStat.js~JSerStat#findJSerWeek",
+    "method"
+  ],
+  [
+    "src/jserstat.js~jserstat#findjserweeksbetween",
+    "class/src/JSerStat.js~JSerStat.html#instance-method-findJSerWeeksBetween",
+    "src/JSerStat.js~JSerStat#findJSerWeeksBetween",
+    "method"
+  ],
+  [
+    "src/jserstat.js~jserstat#findweekwithitem",
+    "class/src/JSerStat.js~JSerStat.html#instance-method-findWeekWithItem",
+    "src/JSerStat.js~JSerStat#findWeekWithItem",
     "method"
   ],
   [
@@ -556,6 +580,12 @@ window.esdocSearchIndex = [
     "class/src/models/JSerItem.js~JSerItem.html#instance-member-date",
     "src/models/JSerItem.js~JSerItem#date",
     "member"
+  ],
+  [
+    "src/models/jseritem.js~jseritem#isequalitem",
+    "class/src/models/JSerItem.js~JSerItem.html#instance-method-isEqualItem",
+    "src/models/JSerItem.js~JSerItem#isEqualItem",
+    "method"
   ],
   [
     "src/models/jseritem.js~jseritem#relatedlinks",

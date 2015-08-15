@@ -63,13 +63,13 @@
 </nav>
 
 <div class="content" data-ice="content"><div class="header-notice">
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import JSerStat from &apos;<span><a href="file/src/JSerStat.js.html#lineNumber12">jser-stat/src/JSerStat.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import JSerStat from &apos;<span><a href="file/src/JSerStat.js.html#lineNumber14">jser-stat/src/JSerStat.js</a></span>&apos;</code></pre></div>
   <span data-ice="access">public</span>
   <span data-ice="kind">class</span>
   
   
   
-  <span data-ice="source">| <span><a href="file/src/JSerStat.js.html#lineNumber12">source</a></span></span>
+  <span data-ice="source">| <span><a href="file/src/JSerStat.js.html#lineNumber14">source</a></span></span>
 </div>
 
 <div class="self-detail detail">
@@ -149,31 +149,6 @@
     <td>
       <div>
         <p>
-           <span data-ice="name"><span><a href="class/src/JSerStat.js~JSerStat.html#instance-member-algoItem">algoItem</a></span></span><span data-ice="signature">: <span><a href="class/src/algo/AlgoItem.js~AlgoItem.html">AlgoItem</a></span></span>
-        </p>
-      </div>
-      <div>
-        
-        
-        
-      </div>
-    </td>
-    <td>
-      
-      
-    </td>
-  </tr>
-<tr data-ice="target">
-    <td>
-      <span class="access" data-ice="access">public</span>
-      
-      
-      
-      <span class="override" data-ice="override"></span>
-    </td>
-    <td>
-      <div>
-        <p>
            <span data-ice="name"><span><a href="class/src/JSerStat.js~JSerStat.html#instance-member-items">items</a></span></span><span data-ice="signature">: <span><span><a href="class/src/models/JSerItem.js~JSerItem.html">JSerItem</a></span><span>[]</span></span></span>
         </p>
       </div>
@@ -231,7 +206,33 @@
     <td>
       <div>
         <p>
-           <span data-ice="name"><span><a href="class/src/JSerStat.js~JSerStat.html#instance-method-getItemsBetWeen">getItemsBetWeen</a></span></span><span data-ice="signature">(beginDate: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date">Date</a></span>, endDate: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date">Date</a></span>): <span><span><a href="class/src/models/JSerItem.js~JSerItem.html">JSerItem</a></span><span>[]</span></span></span>
+           <span data-ice="name"><span><a href="class/src/JSerStat.js~JSerStat.html#instance-method-findItemWithURL">findItemWithURL</a></span></span><span data-ice="signature">(URL: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="class/src/models/JSerItem.js~JSerItem.html">JSerItem</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>URL&#x3068;&#x30DE;&#x30C3;&#x30C1;&#x3059;&#x308B;JSerItem&#x3092;&#x8FD4;&#x3059;</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+           <span data-ice="name"><span><a href="class/src/JSerStat.js~JSerStat.html#instance-method-findItemsBetween">findItemsBetween</a></span></span><span data-ice="signature">(beginDate: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date">Date</a></span>, endDate: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date">Date</a></span>): <span><span><a href="class/src/models/JSerItem.js~JSerItem.html">JSerItem</a></span><span>[]</span></span></span>
         </p>
       </div>
       <div>
@@ -257,7 +258,7 @@
     <td>
       <div>
         <p>
-           <span data-ice="name"><span><a href="class/src/JSerStat.js~JSerStat.html#instance-method-getJSerWeek">getJSerWeek</a></span></span><span data-ice="signature">(number: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>): <span><a href="class/src/models/JSerWeek.js~JSerWeek.html">JSerWeek</a></span></span>
+           <span data-ice="name"><span><a href="class/src/JSerStat.js~JSerStat.html#instance-method-findJSerWeek">findJSerWeek</a></span></span><span data-ice="signature">(number: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>): <span><a href="class/src/models/JSerWeek.js~JSerWeek.html">JSerWeek</a></span></span>
         </p>
       </div>
       <div>
@@ -265,6 +266,107 @@
         
         <div data-ice="description"><p>JSer.info #xxx &#x3092;&#x8FD4;&#x3059;</p>
 </div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+           <span data-ice="name"><span><a href="class/src/JSerStat.js~JSerStat.html#instance-method-findJSerWeeksBetween">findJSerWeeksBetween</a></span></span><span data-ice="signature">(beginDate: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date">Date</a></span>, endDate: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date">Date</a></span>): <span><span><a href="class/src/models/JSerWeek.js~JSerWeek.html">JSerWeek</a></span><span>[]</span></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>begin&#x304B;&#x3089;end&#x306E;&#x7BC4;&#x56F2;&#x306E;JSerWeek&#x306E;&#x914D;&#x5217;&#x3092;&#x8FD4;&#x3059;</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+           <span data-ice="name"><span><a href="class/src/JSerStat.js~JSerStat.html#instance-method-findWeekWithItem">findWeekWithItem</a></span></span><span data-ice="signature">(jserItem: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="class/src/models/JSerWeek.js~JSerWeek.html">JSerWeek</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>JSerItem&#x3092;&#x542B;&#x3093;&#x3067;&#x3044;&#x308B;JSerWeek&#x3092;&#x691C;&#x7D22;&#x3057;&#x3066;&#x8FD4;&#x3059;.</p></div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+           <span data-ice="name"><span><a href="class/src/JSerStat.js~JSerStat.html#instance-method-getItemsBetWeen">getItemsBetWeen</a></span></span><span data-ice="signature">(beginDate: <span>*</span>, endDate: <span>*</span>): <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+           <span data-ice="name"><span><a href="class/src/JSerStat.js~JSerStat.html#instance-method-getJSerWeek">getJSerWeek</a></span></span><span data-ice="signature">(number: <span>*</span>): <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
       </div>
     </td>
     <td>
@@ -309,14 +411,13 @@
     <td>
       <div>
         <p>
-           <span data-ice="name"><span><a href="class/src/JSerStat.js~JSerStat.html#instance-method-getJSerWeeksBetWeen">getJSerWeeksBetWeen</a></span></span><span data-ice="signature">(beginDate: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date">Date</a></span>, endDate: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date">Date</a></span>): <span><span><a href="class/src/models/JSerWeek.js~JSerWeek.html">JSerWeek</a></span><span>[]</span></span></span>
+           <span data-ice="name"><span><a href="class/src/JSerStat.js~JSerStat.html#instance-method-getJSerWeeksBetWeen">getJSerWeeksBetWeen</a></span></span><span data-ice="signature">(beginDate: <span>*</span>, endDate: <span>*</span>): <span>*</span></span>
         </p>
       </div>
       <div>
         
         
-        <div data-ice="description"><p>begin&#x304B;&#x3089;end&#x306E;&#x7BC4;&#x56F2;&#x306E;JSerWeek&#x306E;&#x914D;&#x5217;&#x3092;&#x8FD4;&#x3059;</p>
-</div>
+        
       </div>
     </td>
     <td>
@@ -371,7 +472,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/JSerStat.js.html#lineNumber13">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/JSerStat.js.html#lineNumber15">source</a></span></span>
     </span>
   </h3>
 
@@ -426,46 +527,6 @@
 <div data-ice="memberDetails"><h2 data-ice="title">Public Members</h2>
 
 <div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-member-algoItem">
-    <span class="access" data-ice="access">public</span>
-    
-    
-    
-    
-    <span data-ice="name">algoItem</span><span data-ice="signature">: <span><a href="class/src/algo/AlgoItem.js~AlgoItem.html">AlgoItem</a></span></span>
-    <span class="right-info">
-      
-      
-      <span data-ice="source"><span><a href="file/src/JSerStat.js.html#lineNumber26">source</a></span></span>
-    </span>
-  </h3>
-
-  
-  
-  
-  
-
-  
-
-  <div data-ice="properties">
-</div>
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-  
-</div>
-<div class="detail" data-ice="detail">
   <h3 data-ice="anchor" id="instance-member-items">
     <span class="access" data-ice="access">public</span>
     
@@ -476,7 +537,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/JSerStat.js.html#lineNumber17">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/JSerStat.js.html#lineNumber19">source</a></span></span>
     </span>
   </h3>
 
@@ -516,7 +577,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/JSerStat.js.html#lineNumber22">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/JSerStat.js.html#lineNumber24">source</a></span></span>
     </span>
   </h3>
 
@@ -549,17 +610,84 @@
 <div data-ice="methodDetails"><h2 data-ice="title">Public Methods</h2>
 
 <div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-method-getItemsBetWeen">
+  <h3 data-ice="anchor" id="instance-method-findItemWithURL">
     <span class="access" data-ice="access">public</span>
     
     
     
     
-    <span data-ice="name">getItemsBetWeen</span><span data-ice="signature">(beginDate: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date">Date</a></span>, endDate: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date">Date</a></span>): <span><span><a href="class/src/models/JSerItem.js~JSerItem.html">JSerItem</a></span><span>[]</span></span></span>
+    <span data-ice="name">findItemWithURL</span><span data-ice="signature">(URL: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="class/src/models/JSerItem.js~JSerItem.html">JSerItem</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/JSerStat.js.html#lineNumber43">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/JSerStat.js.html#lineNumber139">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>URL&#x3068;&#x30DE;&#x30C3;&#x30C1;&#x3059;&#x308B;JSerItem&#x3092;&#x8FD4;&#x3059;</p>
+</div>
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" data-depth="0">URL</td>
+      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tr>
+        <td class="return-type" data-ice="returnType"><span><a href="class/src/models/JSerItem.js~JSerItem.html">JSerItem</a></span></td>
+        
+      </tr>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-findItemsBetween">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    <span data-ice="name">findItemsBetween</span><span data-ice="signature">(beginDate: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date">Date</a></span>, endDate: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date">Date</a></span>): <span><span><a href="class/src/models/JSerItem.js~JSerItem.html">JSerItem</a></span><span>[]</span></span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/JSerStat.js.html#lineNumber53">source</a></span></span>
     </span>
   </h3>
 
@@ -622,17 +750,17 @@
   
 </div>
 <div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-method-getJSerWeek">
+  <h3 data-ice="anchor" id="instance-method-findJSerWeek">
     <span class="access" data-ice="access">public</span>
     
     
     
     
-    <span data-ice="name">getJSerWeek</span><span data-ice="signature">(number: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>): <span><a href="class/src/models/JSerWeek.js~JSerWeek.html">JSerWeek</a></span></span>
+    <span data-ice="name">findJSerWeek</span><span data-ice="signature">(number: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>): <span><a href="class/src/models/JSerWeek.js~JSerWeek.html">JSerWeek</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/JSerStat.js.html#lineNumber84">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/JSerStat.js.html#lineNumber102">source</a></span></span>
     </span>
   </h3>
 
@@ -690,68 +818,17 @@
   
 </div>
 <div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-method-getJSerWeeks">
+  <h3 data-ice="anchor" id="instance-method-findJSerWeeksBetween">
     <span class="access" data-ice="access">public</span>
     
     
     
     
-    <span data-ice="name">getJSerWeeks</span><span data-ice="signature">(): <span><span><a href="class/src/models/JSerWeek.js~JSerWeek.html">JSerWeek</a></span><span>[]</span></span></span>
+    <span data-ice="name">findJSerWeeksBetween</span><span data-ice="signature">(beginDate: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date">Date</a></span>, endDate: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date">Date</a></span>): <span><span><a href="class/src/models/JSerWeek.js~JSerWeek.html">JSerWeek</a></span><span>[]</span></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/JSerStat.js.html#lineNumber51">source</a></span></span>
-    </span>
-  </h3>
-
-  
-  
-  
-  <div data-ice="description"><p>&#x5168;&#x3066;&#x306E;JSerWeek&#x306E;&#x914D;&#x5217;&#x3092;&#x8FD4;&#x3059;</p>
-</div>
-
-  
-
-  <div data-ice="properties">
-</div>
-
-  <div class="return-params" data-ice="returnParams">
-    <h4>Return:</h4>
-    <table>
-      <tr>
-        <td class="return-type" data-ice="returnType"><span><span><a href="class/src/models/JSerWeek.js~JSerWeek.html">JSerWeek</a></span><span>[]</span></span></td>
-        
-      </tr>
-    </table>
-    <div data-ice="returnProperties">
-</div>
-  </div>
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-  
-</div>
-<div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-method-getJSerWeeksBetWeen">
-    <span class="access" data-ice="access">public</span>
-    
-    
-    
-    
-    <span data-ice="name">getJSerWeeksBetWeen</span><span data-ice="signature">(beginDate: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date">Date</a></span>, endDate: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date">Date</a></span>): <span><span><a href="class/src/models/JSerWeek.js~JSerWeek.html">JSerWeek</a></span><span>[]</span></span></span>
-    <span class="right-info">
-      
-      
-      <span data-ice="source"><span><a href="file/src/JSerStat.js.html#lineNumber67">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/JSerStat.js.html#lineNumber81">source</a></span></span>
     </span>
   </h3>
 
@@ -814,6 +891,336 @@
   
 </div>
 <div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-findWeekWithItem">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    <span data-ice="name">findWeekWithItem</span><span data-ice="signature">(jserItem: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="class/src/models/JSerWeek.js~JSerWeek.html">JSerWeek</a></span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/JSerStat.js.html#lineNumber124">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>JSerItem&#x3092;&#x542B;&#x3093;&#x3067;&#x3044;&#x308B;JSerWeek&#x3092;&#x691C;&#x7D22;&#x3057;&#x3066;&#x8FD4;&#x3059;.</p>
+</div>
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" data-depth="0">jserItem</td>
+      <td data-ice="type"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>the jserItem is raw object for JSerItem</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tr>
+        <td class="return-type" data-ice="returnType"><span><a href="class/src/models/JSerWeek.js~JSerWeek.html">JSerWeek</a></span></td>
+        <td class="return-desc" data-ice="returnDescription"><p>The week contain this jserItem.</p>
+</td>
+      </tr>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-getItemsBetWeen">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    <span data-ice="name">getItemsBetWeen</span><span data-ice="signature">(beginDate: <span>*</span>, endDate: <span>*</span>): <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/JSerStat.js.html#lineNumber58">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" data-depth="0">beginDate</td>
+      <td data-ice="type"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" data-depth="0">endDate</td>
+      <td data-ice="type"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tr>
+        <td class="return-type" data-ice="returnType"><span>*</span></td>
+        
+      </tr>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-getJSerWeek">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    <span data-ice="name">getJSerWeek</span><span data-ice="signature">(number: <span>*</span>): <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/JSerStat.js.html#lineNumber115">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" data-depth="0">number</td>
+      <td data-ice="type"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tr>
+        <td class="return-type" data-ice="returnType"><span>*</span></td>
+        
+      </tr>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-getJSerWeeks">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    <span data-ice="name">getJSerWeeks</span><span data-ice="signature">(): <span><span><a href="class/src/models/JSerWeek.js~JSerWeek.html">JSerWeek</a></span><span>[]</span></span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/JSerStat.js.html#lineNumber66">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>&#x5168;&#x3066;&#x306E;JSerWeek&#x306E;&#x914D;&#x5217;&#x3092;&#x8FD4;&#x3059;</p>
+</div>
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tr>
+        <td class="return-type" data-ice="returnType"><span><span><a href="class/src/models/JSerWeek.js~JSerWeek.html">JSerWeek</a></span><span>[]</span></span></td>
+        
+      </tr>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-getJSerWeeksBetWeen">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    <span data-ice="name">getJSerWeeksBetWeen</span><span data-ice="signature">(beginDate: <span>*</span>, endDate: <span>*</span>): <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/JSerStat.js.html#lineNumber93">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" data-depth="0">beginDate</td>
+      <td data-ice="type"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" data-depth="0">endDate</td>
+      <td data-ice="type"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tr>
+        <td class="return-type" data-ice="returnType"><span>*</span></td>
+        
+      </tr>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
   <h3 data-ice="anchor" id="instance-method-getTotalWeekCount">
     <span class="access" data-ice="access">public</span>
     
@@ -824,7 +1231,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/JSerStat.js.html#lineNumber33">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/JSerStat.js.html#lineNumber43">source</a></span></span>
     </span>
   </h3>
 
