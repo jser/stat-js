@@ -1,5 +1,7 @@
 // LICENSE : MIT
 "use strict";
+require('array.prototype.find');
+
 import Item from "./models/JSerItem"
 import Post from "./models/JSerPost"
 import Week from "./models/JSerWeek"
@@ -22,8 +24,16 @@ export default class JSerStat {
         this.posts = this._rawPosts.filter(filterJSerCategory).map((post, index) => {
             return new Post(index + 1, post);
         });
-        /** @type {AlgoItem} */
-        this.algoItem = new AlgoItem(this.items);
+        /**
+         *  @type {AlgoItem}
+         *  @private
+         **/
+        this._algoItem = new AlgoItem(this.items);
+        /**
+         * @type {AlgoPost}
+         * @private
+         */
+        this._algoPost = new AlgoPost(this.posts);
     }
 
     /**
@@ -40,8 +50,13 @@ export default class JSerStat {
      * @param {Date} endDate
      * @returns {JSerItem[]}
      */
+    findItemsBetween(beginDate, endDate) {
+        return this._algoItem.findItemsBetween(beginDate, endDate);
+    }
+
+    // deprecated
     getItemsBetWeen(beginDate, endDate) {
-        return this.algoItem.findItemsBetween(beginDate, endDate);
+        return this.findItemsBetween(beginDate, endDate)
     }
 
     /**
@@ -49,13 +64,12 @@ export default class JSerStat {
      * @returns {JSerWeek[]}
      */
     getJSerWeeks() {
-        var results = [];
-        this.posts.reduce((currentPost, nextPost)=> {
-            var jserWeek = new Week(currentPost, nextPost, this.algoItem);
+        return this.posts.reduce((results, currentPost, index)=> {
+            var prevPost = this.posts[index - 1];
+            var jserWeek = new Week(currentPost, prevPost, this._algoItem);
             results.push(jserWeek);
-            return nextPost;
-        });
-        return results;
+            return results;
+        }, []);
     }
 
     /**
@@ -64,16 +78,20 @@ export default class JSerStat {
      * @param {Date} endDate
      * @returns {JSerWeek[]}
      */
-    getJSerWeeksBetWeen(beginDate, endDate) {
-        var results = [];
-        var algoPost = new AlgoPost(this.posts);
+    findJSerWeeksBetween(beginDate, endDate) {
+        var algoPost = this._algoPost;
         var posts = algoPost.findPostsBetween(beginDate, endDate);
-        posts.reduce((currentPost, nextPost)=> {
-            var jserWeek = new Week(currentPost, nextPost, this.algoItem);
+        return posts.reduce((results, currentPost, index)=> {
+            var prevPost = this.posts[index - 1];
+            var jserWeek = new Week(currentPost, prevPost, this._algoItem);
             results.push(jserWeek);
-            return nextPost;
-        });
-        return results;
+            return results;
+        }, []);
+    }
+
+    // deprecated
+    getJSerWeeksBetWeen(beginDate, endDate) {
+        return this.findJSerWeeksBetween(beginDate, endDate)
     }
 
     /**
@@ -81,7 +99,7 @@ export default class JSerStat {
      * @param {number} number number start with 1
      * @returns {JSerWeek}
      */
-    getJSerWeek(number) {
+    findJSerWeek(number) {
         if (number <= 0) {
             throw new Error(`number:${number} should be >= 1`);
         }
@@ -89,7 +107,27 @@ export default class JSerStat {
             return null;
         }
         var targetPost = this.posts[number - 1];
-        var nextPost = this.posts[number];
-        return new Week(targetPost, nextPost, this.algoItem);
+        var prevPost = this.posts[number - 2];
+        return new Week(targetPost, prevPost, this._algoItem);
+    }
+
+    // deprecated
+    getJSerWeek(number) {
+        return this.findJSerWeek(number);
+    }
+
+    /**
+     * JSerItemを含んでいるJSerWeekを検索して返す.
+     * @param {Object} jserItem the jserItem is raw object for JSerItem
+     * @return {JSerWeek} The week contain this jserItem.
+     */
+    findWeekWithItem(jserItem) {
+        var targetItem = new Item(jserItem);
+        var jSerWeeks = this.getJSerWeeks();
+        return jSerWeeks.find(week => {
+            return week.items.some(item => {
+                return targetItem.isEqualItem(item);
+            })
+        })
     }
 }
