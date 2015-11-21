@@ -38,6 +38,7 @@
 <li data-ice="classDoc"><span><a href="class/src/models/JSerPost.js~JSerPost.html">JSerPost</a></span></li>
 <li data-ice="classDoc"><span><a href="class/src/JSerStat.js~JSerStat.html">JSerStat</a></span></li>
 <li data-ice="classDoc"><span><a href="class/src/models/JSerWeek.js~JSerWeek.html">JSerWeek</a></span></li>
+<li data-ice="classDoc"><span><a href="class/src/natural/NaturalSearcher.js~NaturalSearcher.html">NaturalSearcher</a></span></li>
 </ul>
 </div>
 
@@ -88,19 +89,21 @@
 <li><a href="src/models/JSerPost.js">src/models/JSerPost.js</a> from <a href="https://github.com/jser/jser.github.io" title="jser/jser.github.io">jser/jser.github.io</a></li>
 <li><a href="src/models/JSerWeek.js">src/models/JSerWeek.js</a> is JSerItem + JSerPost</li>
 </ul>
-<h3 id="getitemsbetween-begindate-enddate-jseritem-">getItemsBetWeen(beginDate, endDate): JSerItem[]</h3>
+<h3 id="finditemsbetween-begindate-enddate-jseritem-">findItemsBetween(beginDate, endDate): JSerItem[]</h3>
 <p>return JSerItems between two dates</p>
 <h3 id="getjserweeks-jserweek-">getJSerWeeks(): JSerWeek[]</h3>
 <p>return all JSerWeeks</p>
-<h3 id="getjserweeksbetween-begindate-enddate-jserweek-">getJSerWeeksBetWeen(beginDate, endDate):  JSerWeek[]</h3>
+<h3 id="findjserweeksbetween-begindate-enddate-jserweek-">findJSerWeeksBetween(beginDate, endDate):  JSerWeek[]</h3>
 <p>return JSerWeeks between two dates</p>
-<h3 id="getjserweek-number-jserweek">getJSerWeek(number): JSerWeek</h3>
+<h3 id="findjserweek-number-jserweek">findJSerWeek(number): JSerWeek</h3>
 <p>number start with 1.</p>
 <p>return JSerWeek at the number.</p>
 <h3 id="findweekwithitem-itemobject-jserweek">findWeekWithItem(itemObject): JSerWeek</h3>
 <p>return JSerWeek contain the itemObject.</p>
 <h3 id="finditemwithurl-url-jseritem">findItemWithURL(URL): JSerItem</h3>
 <p>return JSerItem match the <code>URL</code>.</p>
+<h3 id="findrelateditems-item-limit-10-jseritem-">findRelatedItems(item, limit = 10): JSerItem[]</h3>
+<p>return JSerItem<strong>s</strong> that related the argument <code>item</code>.</p>
 <h2 id="tests">Tests</h2>
 <pre><code><pre class="source-code"><code class="prettyprint">npm test</code></pre>
 </code></pre><h2 id="contributing">Contributing</h2>

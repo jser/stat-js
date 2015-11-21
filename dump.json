@@ -9,7 +9,7 @@
     "access": null,
     "description": null,
     "lineNumber": 2,
-    "content": "// LICENSE : MIT\n\"use strict\";\nrequire('array.prototype.find');\n\nimport Item from \"./models/JSerItem\"\nimport Post from \"./models/JSerPost\"\nimport Week from \"./models/JSerWeek\"\nimport AlgoItem from \"./algo/AlgoItem\"\nimport AlgoPost from \"./algo/AlgoPost.js\"\n\nfunction filterJSerCategory(article) {\n    return /jser/i.test(article.category);\n}\nexport default class JSerStat {\n    constructor(rawItems, rawPosts) {\n        this._rawItems = rawItems || require(\"../data/items.json\");\n        this._rawPosts = rawPosts || require(\"../data/posts.json\");\n        /** @type {JSerItem[]} */\n        this.items = this._rawItems.map(function (item) {\n            return new Item(item);\n        });\n        // JSer カテゴリだけにする\n        /** @type {JSerPost[]} */\n        this.posts = this._rawPosts.filter(filterJSerCategory).map((post, index) => {\n            return new Post(index + 1, post);\n        });\n        /**\n         *  @type {AlgoItem}\n         *  @private\n         **/\n        this._algoItem = new AlgoItem(this.items);\n        /**\n         * @type {AlgoPost}\n         * @private\n         */\n        this._algoPost = new AlgoPost(this.posts);\n    }\n\n    /**\n     * 全部で何週あるかを返す(投稿記事の数と一致)\n     * @returns {number}\n     */\n    getTotalWeekCount() {\n        return this.posts.length;\n    }\n\n    /**\n     * beginからendの範囲のJSerItemの配列を返す\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerItem[]}\n     */\n    findItemsBetween(beginDate, endDate) {\n        return this._algoItem.findItemsBetween(beginDate, endDate);\n    }\n\n    // deprecated\n    getItemsBetWeen(beginDate, endDate) {\n        return this.findItemsBetween(beginDate, endDate)\n    }\n\n    /**\n     * 全てのJSerWeekの配列を返す\n     * @returns {JSerWeek[]}\n     */\n    getJSerWeeks() {\n        return this.posts.reduce((results, currentPost, index)=> {\n            var prevPost = this.posts[index - 1];\n            var jserWeek = new Week(currentPost, prevPost, this._algoItem);\n            results.push(jserWeek);\n            return results;\n        }, []);\n    }\n\n    /**\n     * beginからendの範囲のJSerWeekの配列を返す\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerWeek[]}\n     */\n    findJSerWeeksBetween(beginDate, endDate) {\n        var algoPost = this._algoPost;\n        var posts = algoPost.findPostsBetween(beginDate, endDate);\n        return posts.reduce((results, currentPost, index)=> {\n            var prevPost = this.posts[index - 1];\n            var jserWeek = new Week(currentPost, prevPost, this._algoItem);\n            results.push(jserWeek);\n            return results;\n        }, []);\n    }\n\n    // deprecated\n    getJSerWeeksBetWeen(beginDate, endDate) {\n        return this.findJSerWeeksBetween(beginDate, endDate)\n    }\n\n    /**\n     * JSer.info #xxx を返す\n     * @param {number} number number start with 1\n     * @returns {JSerWeek}\n     */\n    findJSerWeek(number) {\n        if (number <= 0) {\n            throw new Error(`number:${number} should be >= 1`);\n        }\n        if (number > this.posts.length) {\n            return null;\n        }\n        var targetPost = this.posts[number - 1];\n        var prevPost = this.posts[number - 2];\n        return new Week(targetPost, prevPost, this._algoItem);\n    }\n\n    // deprecated\n    getJSerWeek(number) {\n        return this.findJSerWeek(number);\n    }\n\n    /**\n     * JSerItemを含んでいるJSerWeekを検索して返す.\n     * @param {Object} jserItem the jserItem is raw object for JSerItem\n     * @return {JSerWeek} The week contain this jserItem.\n     */\n    findWeekWithItem(jserItem) {\n        var targetItem = new Item(jserItem);\n        var jSerWeeks = this.getJSerWeeks();\n        return jSerWeeks.find(week => {\n            return week.items.some(item => {\n                return targetItem.isEqualItem(item);\n            });\n        });\n    }\n\n    /**\n     * URLとマッチするJSerItemを返す\n     * @param {string} URL\n     * @return {JSerItem}\n     */\n    findItemWithURL(URL) {\n        return this.items.find(item => {\n            return item.url === URL;\n        });\n    }\n}"
+    "content": "// LICENSE : MIT\n\"use strict\";\nrequire('array.prototype.find');\n\nimport Item from \"./models/JSerItem\"\nimport Post from \"./models/JSerPost\"\nimport Week from \"./models/JSerWeek\"\nimport AlgoItem from \"./algo/AlgoItem\"\nimport AlgoPost from \"./algo/AlgoPost.js\"\nimport NaturalSearcher from \"./natural/NaturalSearcher\"\nfunction filterJSerCategory(article) {\n    return /jser/i.test(article.category);\n}\nexport default class JSerStat {\n    constructor(rawItems, rawPosts) {\n        this._rawItems = rawItems ;\n        this._rawPosts = rawPosts;\n        /** @type {JSerItem[]} */\n        this.items = this._rawItems.map(function (item) {\n            return new Item(item);\n        });\n        // JSer カテゴリだけにする\n        /** @type {JSerPost[]} */\n        this.posts = this._rawPosts.filter(filterJSerCategory).map((post, index) => {\n            return new Post(index + 1, post);\n        });\n        /**\n         *\n         * @type {JSerWeek[]}\n         * @private\n         */\n        this._weeks = [];\n        /**\n         *  @type {AlgoItem}\n         *  @private\n         **/\n        this._algoItem = new AlgoItem(this.items);\n        /**\n         * @type {AlgoPost}\n         * @private\n         */\n        this._algoPost = new AlgoPost(this.posts);\n        /**\n         * @type {NaturalSearcher}\n         */\n        this.naturalSearch = null;\n    }\n\n    /**\n     * 全部で何週あるかを返す(投稿記事の数と一致)\n     * @returns {number}\n     */\n    getTotalWeekCount() {\n        return this.posts.length;\n    }\n\n    /**\n     * beginからendの範囲のJSerItemの配列を返す\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerItem[]}\n     */\n    findItemsBetween(beginDate, endDate) {\n        return this._algoItem.findItemsBetween(beginDate, endDate);\n    }\n\n    // deprecated\n    getItemsBetWeen(beginDate, endDate) {\n        return this.findItemsBetween(beginDate, endDate)\n    }\n\n    /**\n     * 全てのJSerWeekの配列を返す\n     * @returns {JSerWeek[]}\n     */\n    getJSerWeeks() {\n        if (this._weeks.length === 0) {\n            this._weeks = this.posts.reduce((results, currentPost, index)=> {\n                var prevPost = this.posts[index - 1];\n                var jserWeek = new Week(currentPost, prevPost, this._algoItem);\n                results.push(jserWeek);\n                return results;\n            }, []);\n        }\n        return this._weeks;\n    }\n\n    /**\n     * beginからendの範囲のJSerWeekの配列を返す\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerWeek[]}\n     */\n    findJSerWeeksBetween(beginDate, endDate) {\n        var algoPost = this._algoPost;\n        var posts = algoPost.findPostsBetween(beginDate, endDate);\n        return posts.reduce((results, currentPost, index)=> {\n            var prevPost = this.posts[index - 1];\n            var jserWeek = new Week(currentPost, prevPost, this._algoItem);\n            results.push(jserWeek);\n            return results;\n        }, []);\n    }\n\n    // deprecated\n    getJSerWeeksBetWeen(beginDate, endDate) {\n        return this.findJSerWeeksBetween(beginDate, endDate)\n    }\n\n    /**\n     * JSer.info #xxx を返す\n     * @param {number} number number start with 1\n     * @returns {JSerWeek}\n     */\n    findJSerWeek(number) {\n        if (number <= 0) {\n            throw new Error(`number:${number} should be >= 1`);\n        }\n        if (number > this.posts.length) {\n            return null;\n        }\n        var targetPost = this.posts[number - 1];\n        var prevPost = this.posts[number - 2];\n        return new Week(targetPost, prevPost, this._algoItem);\n    }\n\n    // deprecated\n    getJSerWeek(number) {\n        return this.findJSerWeek(number);\n    }\n\n    /**\n     * JSerItemを含んでいるJSerWeekを検索して返す.\n     * @param {Object} jserItem the jserItem is raw object for JSerItem\n     * @return {JSerWeek|null} The week contain this jserItem.\n     * 未来の記事などJSerWeekに所属していない場合もある\n     */\n    findWeekWithItem(jserItem) {\n        var targetItem = new Item(jserItem);\n        var tenDaysAfter = new Date(targetItem.date);\n        tenDaysAfter.setDate(targetItem.date.getDate() + 12);\n        var jSerWeeks = this.findJSerWeeksBetween(targetItem.date, tenDaysAfter);\n        return jSerWeeks.find(week => {\n            if (week.post.date < targetItem.date) {\n                return false;\n            }\n            return week.items.some(item => {\n                return targetItem.isEqualItem(item);\n            });\n        });\n    }\n\n    /**\n     * URLとマッチするJSerItemを返す\n     * @param {string} URL\n     * @return {JSerItem}\n     */\n    findItemWithURL(URL) {\n        return this.items.find(item => {\n            return item.url === URL;\n        });\n    }\n\n    /**\n     * `item` と関連するJSerItemの配列を返す\n     * @param {JSerItem} item\n     * @param {number} limit\n     * @returns {JSerItem[]}\n     */\n    findRelatedItems(item, limit = 10) {\n        if (this.naturalSearch == null) {\n            this.naturalSearch = new NaturalSearcher(this.items);\n        }\n        return this.naturalSearch.findRelatedItems(item, limit);\n    }\n}"
   },
   {
     "kind": "function",
@@ -159,12 +159,31 @@
     "kind": "member",
     "static": false,
     "variation": null,
+    "name": "_weeks",
+    "memberof": "src/JSerStat.js~JSerStat",
+    "longname": "src/JSerStat.js~JSerStat#_weeks",
+    "access": "private",
+    "description": "",
+    "lineNumber": 32,
+    "type": {
+      "nullable": null,
+      "types": [
+        "JSerWeek[]"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
     "name": "_algoItem",
     "memberof": "src/JSerStat.js~JSerStat",
     "longname": "src/JSerStat.js~JSerStat#_algoItem",
     "access": null,
     "description": " @type {AlgoItem}\n @private",
-    "lineNumber": 31,
+    "lineNumber": 37,
     "type": {
       "types": [
         "*"
@@ -180,11 +199,30 @@
     "longname": "src/JSerStat.js~JSerStat#_algoPost",
     "access": "private",
     "description": null,
-    "lineNumber": 36,
+    "lineNumber": 42,
     "type": {
       "nullable": null,
       "types": [
         "AlgoPost"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "naturalSearch",
+    "memberof": "src/JSerStat.js~JSerStat",
+    "longname": "src/JSerStat.js~JSerStat#naturalSearch",
+    "access": null,
+    "description": null,
+    "lineNumber": 46,
+    "type": {
+      "nullable": null,
+      "types": [
+        "NaturalSearcher"
       ],
       "spread": false,
       "description": null
@@ -199,7 +237,7 @@
     "longname": "src/JSerStat.js~JSerStat#getTotalWeekCount",
     "access": null,
     "description": "全部で何週あるかを返す(投稿記事の数と一致)",
-    "lineNumber": 43,
+    "lineNumber": 53,
     "unknown": [
       {
         "tagName": "@returns",
@@ -226,7 +264,7 @@
     "longname": "src/JSerStat.js~JSerStat#findItemsBetween",
     "access": null,
     "description": "beginからendの範囲のJSerItemの配列を返す",
-    "lineNumber": 53,
+    "lineNumber": 63,
     "unknown": [
       {
         "tagName": "@returns",
@@ -274,7 +312,7 @@
     "longname": "src/JSerStat.js~JSerStat#getItemsBetWeen",
     "access": null,
     "description": null,
-    "lineNumber": 58,
+    "lineNumber": 68,
     "undocument": true,
     "params": [
       {
@@ -306,7 +344,7 @@
     "longname": "src/JSerStat.js~JSerStat#getJSerWeeks",
     "access": null,
     "description": "全てのJSerWeekの配列を返す",
-    "lineNumber": 66,
+    "lineNumber": 76,
     "unknown": [
       {
         "tagName": "@returns",
@@ -325,6 +363,23 @@
     "generator": false
   },
   {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "_weeks",
+    "memberof": "src/JSerStat.js~JSerStat",
+    "longname": "src/JSerStat.js~JSerStat#_weeks",
+    "access": null,
+    "description": null,
+    "lineNumber": 78,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
     "kind": "method",
     "static": false,
     "variation": null,
@@ -333,7 +388,7 @@
     "longname": "src/JSerStat.js~JSerStat#findJSerWeeksBetween",
     "access": null,
     "description": "beginからendの範囲のJSerWeekの配列を返す",
-    "lineNumber": 81,
+    "lineNumber": 94,
     "unknown": [
       {
         "tagName": "@returns",
@@ -381,7 +436,7 @@
     "longname": "src/JSerStat.js~JSerStat#getJSerWeeksBetWeen",
     "access": null,
     "description": null,
-    "lineNumber": 93,
+    "lineNumber": 106,
     "undocument": true,
     "params": [
       {
@@ -413,7 +468,7 @@
     "longname": "src/JSerStat.js~JSerStat#findJSerWeek",
     "access": null,
     "description": "JSer.info #xxx を返す",
-    "lineNumber": 102,
+    "lineNumber": 115,
     "unknown": [
       {
         "tagName": "@returns",
@@ -451,7 +506,7 @@
     "longname": "src/JSerStat.js~JSerStat#getJSerWeek",
     "access": null,
     "description": null,
-    "lineNumber": 115,
+    "lineNumber": 128,
     "undocument": true,
     "params": [
       {
@@ -477,7 +532,7 @@
     "longname": "src/JSerStat.js~JSerStat#findWeekWithItem",
     "access": null,
     "description": "JSerItemを含んでいるJSerWeekを検索して返す.",
-    "lineNumber": 124,
+    "lineNumber": 138,
     "params": [
       {
         "nullable": null,
@@ -493,10 +548,11 @@
     "return": {
       "nullable": null,
       "types": [
-        "JSerWeek"
+        "JSerWeek",
+        "null"
       ],
       "spread": false,
-      "description": "The week contain this jserItem."
+      "description": "The week contain this jserItem.\n未来の記事などJSerWeekに所属していない場合もある"
     },
     "generator": false
   },
@@ -509,7 +565,7 @@
     "longname": "src/JSerStat.js~JSerStat#findItemWithURL",
     "access": null,
     "description": "URLとマッチするJSerItemを返す",
-    "lineNumber": 139,
+    "lineNumber": 158,
     "params": [
       {
         "nullable": null,
@@ -533,6 +589,71 @@
     "generator": false
   },
   {
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "findRelatedItems",
+    "memberof": "src/JSerStat.js~JSerStat",
+    "longname": "src/JSerStat.js~JSerStat#findRelatedItems",
+    "access": null,
+    "description": "`item` と関連するJSerItemの配列を返す",
+    "lineNumber": 170,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{JSerItem[]}"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "JSerItem"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "item",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "limit",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "JSerItem[]"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "naturalSearch",
+    "memberof": "src/JSerStat.js~JSerStat",
+    "longname": "src/JSerStat.js~JSerStat#naturalSearch",
+    "access": null,
+    "description": null,
+    "lineNumber": 172,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
     "kind": "file",
     "static": true,
     "variation": null,
@@ -542,7 +663,7 @@
     "access": null,
     "description": null,
     "lineNumber": 2,
-    "content": "// LICENSE : MIT\n\"use strict\";\nimport {findIndexesBetween} from \"./algoSearch.js\"\n\n// for algorithm\nexport default class AlgoItem {\n    /**\n     *\n     * @param {JSerItem[]} items\n     */\n    constructor(items) {\n        this.items = items;\n        /**\n         * @type number[] 昇順となった各Itemのtime配列\n         */\n        this.itemTimes = items.map(function (item) {\n            return item.date.getTime();\n        });\n    }\n\n    /**\n     *\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerItem[]}\n     */\n    findItemsBetween(beginDate, endDate) {\n        return findIndexesBetween(this.itemTimes, beginDate, endDate).map(itemIndex => this.items[itemIndex]);\n    }\n}"
+    "content": "// LICENSE : MIT\n\"use strict\";\nimport {findIndexesBetween} from \"./algoSearch.js\"\n\n// for algorithm\nexport default class AlgoItem {\n    /**\n     *\n     * @param {JSerItem[]} items\n     */\n    constructor(items) {\n        this.items = items;\n        /**\n         * @type number[] 昇順となった各Itemのtime配列\n         */\n        this.itemTimes = items.map(function (item) {\n            return item.date.getTime();\n        });\n    }\n\n    /**\n     *\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerItem[]}\n     */\n    findItemsBetween(beginDate, endDate) {\n        var indexes = findIndexesBetween(this.itemTimes, beginDate, endDate);\n        var first = indexes[0];\n        var last = indexes[indexes.length - 1];\n        if (indexes.length === 0) {\n            return [];\n        }\n        if (first > last) {\n            return [];\n        }\n        return this.items.slice(first, last + 1);\n    }\n}"
   },
   {
     "kind": "class",
@@ -678,7 +799,7 @@
     "access": null,
     "description": null,
     "lineNumber": 2,
-    "content": "// LICENSE : MIT\n\"use strict\";\nimport {findIndexesBetween} from \"./algoSearch.js\"\n\n// for algorithm\nexport default class AlgoPost {\n    /**\n     *\n     * @param {JSerPost[]} posts\n     */\n    constructor(posts) {\n        this.posts = posts;\n        /**\n         * @type number[] 昇順となった各Postのtime配列\n         */\n        this.postTimeIndex = posts.map(function (post) {\n            return post.date.getTime();\n        });\n    }\n\n    /**\n     *\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerPost[]}\n     */\n    findPostsBetween(beginDate, endDate) {\n        return findIndexesBetween(this.postTimeIndex, beginDate, endDate).map(itemIndex => this.posts[itemIndex]);\n    }\n\n}"
+    "content": "// LICENSE : MIT\n\"use strict\";\nimport {findIndexesBetween} from \"./algoSearch.js\"\n\n// for algorithm\nexport default class AlgoPost {\n    /**\n     *\n     * @param {JSerPost[]} posts\n     */\n    constructor(posts) {\n        this.posts = posts;\n        /**\n         * @type number[] 昇順となった各Postのtime配列\n         */\n        this.postTimeIndex = posts.map(function (post) {\n            return post.date.getTime();\n        });\n    }\n\n    /**\n     *\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerPost[]}\n     */\n    findPostsBetween(beginDate, endDate) {\n        var indexes = findIndexesBetween(this.postTimeIndex, beginDate, endDate);\n        var first = indexes[0];\n        var last = indexes[indexes.length - 1];\n\n        if (indexes.length === 0) {\n            return [];\n        }\n        // [1, 0] or [ 1, -1]\n        if (first > last && last <= 0) {\n            return [];\n        }\n        // [1, 10]\n        return this.posts.slice(first, last + 1);\n    }\n\n}"
   },
   {
     "kind": "class",
@@ -814,7 +935,7 @@
     "access": null,
     "description": null,
     "lineNumber": 2,
-    "content": "// LICENSE : MIT\n\"use strict\";\nexport function findIndexesBetween(times, beginDate, endDate) {\n    var beginTime = beginDate.getTime();\n    var endTime = endDate.getTime();\n    return times.reduce((indexes, time, index) => {\n        if (beginTime <= time && time <= endTime) {\n            indexes.push(index);\n        }\n        return indexes;\n    }, []);\n}\nexport function findIndexBiggerTime(array, time) {\n    var currentIndex = 0;\n    for (var i = currentIndex; i < array.length; i++) {\n        var comparedTime = array[i];\n        if (time >= comparedTime) {\n            currentIndex = i;\n        } else {\n            // timeより大きいものが出てきたら直前のものを返す\n            return currentIndex;\n        }\n    }\n    return -1\n}\n\nexport function findIndexLessTime(array, time) {\n    var currentIndex = array.length - 1;\n    for (var i = currentIndex; i >= 0; i--) {\n        var comparedTime = array[i];\n        if (time < comparedTime) {\n            currentIndex = i;\n        } else {\n            // timeよりも小さいものが出てきたら直前のものを返す\n            return currentIndex;\n        }\n    }\n    return -1;\n}\n\nfunction compare_number(a, b) {\n    return a - b;\n}"
+    "content": "// LICENSE : MIT\n\"use strict\";\nimport binarysearch from \"binarysearch\"\nexport function findIndexesBetween(times, beginDate, endDate) {\n    var beginTime = beginDate.getTime();\n    var endTime = endDate.getTime();\n    return binarysearch.range(times, beginTime, endTime);\n}\nexport function findIndexBiggerTime(array, time) {\n    var currentIndex = 0;\n    for (var i = currentIndex; i < array.length; i++) {\n        var comparedTime = array[i];\n        if (time >= comparedTime) {\n            currentIndex = i;\n        } else {\n            // timeより大きいものが出てきたら直前のものを返す\n            return currentIndex;\n        }\n    }\n    return -1\n}\n\nexport function findIndexLessTime(array, time) {\n    var currentIndex = array.length - 1;\n    for (var i = currentIndex; i >= 0; i--) {\n        var comparedTime = array[i];\n        if (time < comparedTime) {\n            currentIndex = i;\n        } else {\n            // timeよりも小さいものが出てきたら直前のものを返す\n            return currentIndex;\n        }\n    }\n    return -1;\n}\n\nfunction compare_number(a, b) {\n    return a - b;\n}"
   },
   {
     "kind": "function",
@@ -828,7 +949,7 @@
     "importPath": "jser-stat/src/algo/algoSearch.js",
     "importStyle": "{findIndexesBetween}",
     "description": null,
-    "lineNumber": 3,
+    "lineNumber": 4,
     "undocument": true,
     "params": [
       {
@@ -869,7 +990,7 @@
     "importPath": "jser-stat/src/algo/algoSearch.js",
     "importStyle": "{findIndexBiggerTime}",
     "description": null,
-    "lineNumber": 13,
+    "lineNumber": 9,
     "undocument": true,
     "params": [
       {
@@ -904,7 +1025,7 @@
     "importPath": "jser-stat/src/algo/algoSearch.js",
     "importStyle": "{findIndexLessTime}",
     "description": null,
-    "lineNumber": 27,
+    "lineNumber": 23,
     "undocument": true,
     "params": [
       {
@@ -939,7 +1060,7 @@
     "importPath": "jser-stat/src/algo/algoSearch.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 41,
+    "lineNumber": 37,
     "undocument": true,
     "params": [
       {
@@ -961,6 +1082,18 @@
       ]
     },
     "generator": false
+  },
+  {
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/browser-index.js",
+    "memberof": null,
+    "longname": "src/browser-index.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 2,
+    "content": "// LICENSE : MIT\n\"use strict\";\nmodule.exports = {\n    JSerStat: require(\"./JSerStat\"),\n    compute: require(\"./compute/compute-tags\")\n};"
   },
   {
     "kind": "file",
@@ -1060,7 +1193,67 @@
     "access": null,
     "description": null,
     "lineNumber": 2,
-    "content": "// LICENSE : MIT\n\"use strict\";\nmodule.exports = {\n    JSerStat: require(\"./JSerStat\"),\n    compute: require(\"./compute/compute-tags\")\n};"
+    "content": "// LICENSE : MIT\n\"use strict\";\nconst _Posts = require(\"../data/posts.json\");\nconst _Items = require(\"../data/items.json\");\nconst JSerStat = require(\"./JSerStat\");\nmodule.exports = {\n    JSerStat: function _JSerStat(items = _Items, posts = _Posts) {\n        return new JSerStat(items, posts);\n    },\n    compute: require(\"./compute/compute-tags\")\n};"
+  },
+  {
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "_Posts",
+    "memberof": "src/index.js",
+    "longname": "src/index.js~_Posts",
+    "access": null,
+    "export": false,
+    "importPath": "jser-stat/src/index.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "_Items",
+    "memberof": "src/index.js",
+    "longname": "src/index.js~_Items",
+    "access": null,
+    "export": false,
+    "importPath": "jser-stat/src/index.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "JSerStat",
+    "memberof": "src/index.js",
+    "longname": "src/index.js~JSerStat",
+    "access": null,
+    "export": false,
+    "importPath": "jser-stat/src/index.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 5,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
   },
   {
     "kind": "file",
@@ -1548,7 +1741,7 @@
     "access": null,
     "description": null,
     "lineNumber": 2,
-    "content": "// LICENSE : MIT\n\"use strict\";\nexport default class JSerWeek {\n    constructor(currentPost, prevPost, algoItem) {\n        /** @type {number} */\n        this.weekNumber = currentPost.postNumber;\n        /** @type {Date} */\n        this.beginDate = prevPost ? prevPost.date : null;\n        /** @type {Date} */\n        this.endDate = currentPost.date;\n        /** @type {JSerPost} */\n        this.post = currentPost;\n        var pastDate = new Date(1995, 11, 17);\n        /** @type {JSerItem[]} */\n        this.items = algoItem.findItemsBetween(this.beginDate || pastDate, this.endDate);\n    }\n}"
+    "content": "// LICENSE : MIT\n\"use strict\";\nexport default class JSerWeek {\n    constructor(currentPost, prevPost, algoItem) {\n        /** @type {number} */\n        this.weekNumber = currentPost.postNumber;\n        /** @type {Date} */\n        this.beginDate = prevPost ? prevPost.date : null;\n        /** @type {Date} */\n        this.endDate = currentPost.date;\n        /** @type {JSerPost} */\n        this.post = currentPost;\n        /** @type {JSerItem[]} */\n        this._items = [];\n        this._algoItem = algoItem;\n    }\n\n    get items() {\n        if (this._items.length === 0) {\n            var pastDate = new Date(1995, 11, 17);\n            this._items = this._algoItem.findItemsBetween(this.beginDate || pastDate, this.endDate)\n        }\n        return this._items;\n    }\n}"
   },
   {
     "kind": "class",
@@ -1679,12 +1872,12 @@
     "kind": "member",
     "static": false,
     "variation": null,
-    "name": "items",
+    "name": "_items",
     "memberof": "src/models/JSerWeek.js~JSerWeek",
-    "longname": "src/models/JSerWeek.js~JSerWeek#items",
+    "longname": "src/models/JSerWeek.js~JSerWeek#_items",
     "access": null,
     "description": null,
-    "lineNumber": 15,
+    "lineNumber": 14,
     "type": {
       "nullable": null,
       "types": [
@@ -1693,6 +1886,319 @@
       "spread": false,
       "description": null
     }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "_algoItem",
+    "memberof": "src/models/JSerWeek.js~JSerWeek",
+    "longname": "src/models/JSerWeek.js~JSerWeek#_algoItem",
+    "access": null,
+    "description": null,
+    "lineNumber": 15,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "kind": "get",
+    "static": false,
+    "variation": null,
+    "name": "items",
+    "memberof": "src/models/JSerWeek.js~JSerWeek",
+    "longname": "src/models/JSerWeek.js~JSerWeek#items",
+    "access": null,
+    "description": null,
+    "lineNumber": 18,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "_items",
+    "memberof": "src/models/JSerWeek.js~JSerWeek",
+    "longname": "src/models/JSerWeek.js~JSerWeek#_items",
+    "access": null,
+    "description": null,
+    "lineNumber": 21,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/natural/NaturalSearcher.js",
+    "memberof": null,
+    "longname": "src/natural/NaturalSearcher.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 2,
+    "content": "// LICENSE : MIT\n\"use strict\";\nconst TfIdf = require(\"natural/lib/natural/tfidf/tfidf\");\n// merge sort\nlet mergeSort = (arr) => {\n    if (arr.length < 2) {\n        return arr;\n    }\n\n    let middle = parseInt(arr.length / 2),\n        left = arr.slice(0, middle),\n        right = arr.slice(middle);\n\n    return merge(mergeSort(left), mergeSort(right));\n};\n\nlet merge = (left, right) => {\n    let result = [];\n\n    while (left.length && right.length) {\n        right[0].measure <= left[0].measure ?\n        result.push(left.shift()) :\n        result.push(right.shift());\n    }\n\n    while (left.length) {\n        result.push(left.shift());\n    }\n    while (right.length) {\n        result.push(right.shift());\n    }\n\n    return result;\n};\nvar ignoreWord = function (word) {\n    if (word.length <= 1) {\n        return false;\n    }\n    // 数字と.のみは除外\n    if (/^v?[\\d\\.]+$/.test(word)) {\n        return false;\n    }\n    if (/[\\?&=]/.test(word)) {\n        return false\n    }\n    if (/^\\.(html|md|php)$/i.test(word)) {\n        return false\n    }\n    return true;\n};\nfunction urlToWords(url) {\n    var pathList = url.split(\"/\");\n    var pathNames = pathList[pathList.length - 1].split(/([-_]|\\.html$|\\.md$|\\.php$|#)/i);\n    return pathNames.filter(ignoreWord);\n\n}\nexport default class NaturalSearcher {\n    constructor(items) {\n        this.items = items;\n        this.tfidf = new TfIdf();\n        this.addItemsAsDocuments(this.items);\n    }\n\n    addItemsAsDocuments(items) {\n        items.forEach((item) => {\n            var urlKeyString = urlToWords(item.url).join(\" \");\n            var relatedString = item.relatedLinks.map(function (relatedObject) {\n                return relatedObject.title + \" \" + urlToWords(relatedObject.url).join(\" \")\n            }).join(\"\");\n            var tagsString = (item.tags || []).join(\" \");\n            // 全部を使うと長すぎるコンテンツが有利になりすぎるので絞る\n            var slicedContent = item.content.slice(0, 200);\n            this.tfidf.addDocument(item.title + \"\\n\" + tagsString + \"\\n\" + slicedContent + \"\\n\" + urlKeyString + \"\\n\" + relatedString);\n        });\n    }\n\n    /**\n     *\n     * @param {JSerItem} targetItem\n     * @param {number} limit\n     */\n    findRelatedItems(targetItem, limit) {\n        var targetIndex = this.items.indexOf(targetItem);\n        if (targetIndex === -1) {\n            this.items.some(function (item, index) {\n                if (item.isEqualItem(item)) {\n                    targetIndex = index;\n                    return true;\n                }\n            });\n            if (targetIndex === -1) {\n                throw new Error(\"Not found this item: \" + targetItem);\n            }\n        }\n        var terms = this.tfidf.listTerms(targetIndex);\n        var results = [];\n        this.tfidf.tfidfs(terms.map(function (term) {\n            return term.term\n        }), function (i, measure) {\n            results.push({\n                index: i,\n                measure: measure\n            });\n        });\n        var sorted = mergeSort(results);\n        // tifidf -> item\n        var matchItems = [];\n        for (var i = 0, len = Math.min(sorted.length, limit + 1); i < len; i++) {\n            // 自分自身は含めない\n            let matchItem = this.items[sorted[i].index];\n            if (this.items[targetIndex].isEqualItem(matchItem)) {\n                continue;\n            }\n            matchItems.push(matchItem);\n        }\n        return matchItems;\n    }\n}"
+  },
+  {
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "TfIdf",
+    "memberof": "src/natural/NaturalSearcher.js",
+    "longname": "src/natural/NaturalSearcher.js~TfIdf",
+    "access": null,
+    "export": false,
+    "importPath": "jser-stat/src/natural/NaturalSearcher.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "mergeSort",
+    "memberof": "src/natural/NaturalSearcher.js",
+    "longname": "src/natural/NaturalSearcher.js~mergeSort",
+    "access": null,
+    "export": false,
+    "importPath": "jser-stat/src/natural/NaturalSearcher.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 5,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "merge",
+    "memberof": "src/natural/NaturalSearcher.js",
+    "longname": "src/natural/NaturalSearcher.js~merge",
+    "access": null,
+    "export": false,
+    "importPath": "jser-stat/src/natural/NaturalSearcher.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 17,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "ignoreWord",
+    "memberof": "src/natural/NaturalSearcher.js",
+    "longname": "src/natural/NaturalSearcher.js~ignoreWord",
+    "access": null,
+    "export": false,
+    "importPath": "jser-stat/src/natural/NaturalSearcher.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 35,
+    "undocument": true,
+    "params": [
+      {
+        "name": "word",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "boolean"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "urlToWords",
+    "memberof": "src/natural/NaturalSearcher.js",
+    "longname": "src/natural/NaturalSearcher.js~urlToWords",
+    "access": null,
+    "export": false,
+    "importPath": "jser-stat/src/natural/NaturalSearcher.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 51,
+    "undocument": true,
+    "params": [
+      {
+        "name": "url",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "kind": "class",
+    "static": true,
+    "variation": null,
+    "name": "NaturalSearcher",
+    "memberof": "src/natural/NaturalSearcher.js",
+    "longname": "src/natural/NaturalSearcher.js~NaturalSearcher",
+    "access": null,
+    "export": true,
+    "importPath": "jser-stat/src/natural/NaturalSearcher.js",
+    "importStyle": "NaturalSearcher",
+    "description": null,
+    "lineNumber": 57,
+    "undocument": true,
+    "interface": false
+  },
+  {
+    "kind": "constructor",
+    "static": false,
+    "variation": null,
+    "name": "constructor",
+    "memberof": "src/natural/NaturalSearcher.js~NaturalSearcher",
+    "longname": "src/natural/NaturalSearcher.js~NaturalSearcher#constructor",
+    "access": null,
+    "description": null,
+    "lineNumber": 58,
+    "undocument": true,
+    "params": [
+      {
+        "name": "items",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "generator": false
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "items",
+    "memberof": "src/natural/NaturalSearcher.js~NaturalSearcher",
+    "longname": "src/natural/NaturalSearcher.js~NaturalSearcher#items",
+    "access": null,
+    "description": null,
+    "lineNumber": 59,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "tfidf",
+    "memberof": "src/natural/NaturalSearcher.js~NaturalSearcher",
+    "longname": "src/natural/NaturalSearcher.js~NaturalSearcher#tfidf",
+    "access": null,
+    "description": null,
+    "lineNumber": 60,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "addItemsAsDocuments",
+    "memberof": "src/natural/NaturalSearcher.js~NaturalSearcher",
+    "longname": "src/natural/NaturalSearcher.js~NaturalSearcher#addItemsAsDocuments",
+    "access": null,
+    "description": null,
+    "lineNumber": 64,
+    "undocument": true,
+    "params": [
+      {
+        "name": "items",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "generator": false
+  },
+  {
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "findRelatedItems",
+    "memberof": "src/natural/NaturalSearcher.js~NaturalSearcher",
+    "longname": "src/natural/NaturalSearcher.js~NaturalSearcher#findRelatedItems",
+    "access": null,
+    "description": "",
+    "lineNumber": 82,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "JSerItem"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "targetItem",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "limit",
+        "description": ""
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
   },
   {
     "kind": "external",

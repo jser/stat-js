@@ -38,6 +38,7 @@
 <li data-ice="classDoc"><span><a href="class/src/models/JSerPost.js~JSerPost.html">JSerPost</a></span></li>
 <li data-ice="classDoc"><span><a href="class/src/JSerStat.js~JSerStat.html">JSerStat</a></span></li>
 <li data-ice="classDoc"><span><a href="class/src/models/JSerWeek.js~JSerWeek.html">JSerWeek</a></span></li>
+<li data-ice="classDoc"><span><a href="class/src/natural/NaturalSearcher.js~NaturalSearcher.html">NaturalSearcher</a></span></li>
 </ul>
 </div>
 
@@ -72,14 +73,14 @@ import Post from &quot;./models/JSerPost&quot;
 import Week from &quot;./models/JSerWeek&quot;
 import AlgoItem from &quot;./algo/AlgoItem&quot;
 import AlgoPost from &quot;./algo/AlgoPost.js&quot;
-
+import NaturalSearcher from &quot;./natural/NaturalSearcher&quot;
 function filterJSerCategory(article) {
     return /jser/i.test(article.category);
 }
 export default class JSerStat {
     constructor(rawItems, rawPosts) {
-        this._rawItems = rawItems || require(&quot;../data/items.json&quot;);
-        this._rawPosts = rawPosts || require(&quot;../data/posts.json&quot;);
+        this._rawItems = rawItems ;
+        this._rawPosts = rawPosts;
         /** @type {JSerItem[]} */
         this.items = this._rawItems.map(function (item) {
             return new Item(item);
@@ -90,6 +91,12 @@ export default class JSerStat {
             return new Post(index + 1, post);
         });
         /**
+         *
+         * @type {JSerWeek[]}
+         * @private
+         */
+        this._weeks = [];
+        /**
          *  @type {AlgoItem}
          *  @private
          **/
@@ -99,6 +106,10 @@ export default class JSerStat {
          * @private
          */
         this._algoPost = new AlgoPost(this.posts);
+        /**
+         * @type {NaturalSearcher}
+         */
+        this.naturalSearch = null;
     }
 
     /**
@@ -129,12 +140,15 @@ export default class JSerStat {
      * @returns {JSerWeek[]}
      */
     getJSerWeeks() {
-        return this.posts.reduce((results, currentPost, index)=&gt; {
-            var prevPost = this.posts[index - 1];
-            var jserWeek = new Week(currentPost, prevPost, this._algoItem);
-            results.push(jserWeek);
-            return results;
-        }, []);
+        if (this._weeks.length === 0) {
+            this._weeks = this.posts.reduce((results, currentPost, index)=&gt; {
+                var prevPost = this.posts[index - 1];
+                var jserWeek = new Week(currentPost, prevPost, this._algoItem);
+                results.push(jserWeek);
+                return results;
+            }, []);
+        }
+        return this._weeks;
     }
 
     /**
@@ -184,12 +198,18 @@ export default class JSerStat {
     /**
      * JSerItem&#x3092;&#x542B;&#x3093;&#x3067;&#x3044;&#x308B;JSerWeek&#x3092;&#x691C;&#x7D22;&#x3057;&#x3066;&#x8FD4;&#x3059;.
      * @param {Object} jserItem the jserItem is raw object for JSerItem
-     * @return {JSerWeek} The week contain this jserItem.
+     * @return {JSerWeek|null} The week contain this jserItem.
+     * &#x672A;&#x6765;&#x306E;&#x8A18;&#x4E8B;&#x306A;&#x3069;JSerWeek&#x306B;&#x6240;&#x5C5E;&#x3057;&#x3066;&#x3044;&#x306A;&#x3044;&#x5834;&#x5408;&#x3082;&#x3042;&#x308B;
      */
     findWeekWithItem(jserItem) {
         var targetItem = new Item(jserItem);
-        var jSerWeeks = this.getJSerWeeks();
+        var tenDaysAfter = new Date(targetItem.date);
+        tenDaysAfter.setDate(targetItem.date.getDate() + 12);
+        var jSerWeeks = this.findJSerWeeksBetween(targetItem.date, tenDaysAfter);
         return jSerWeeks.find(week =&gt; {
+            if (week.post.date &lt; targetItem.date) {
+                return false;
+            }
             return week.items.some(item =&gt; {
                 return targetItem.isEqualItem(item);
             });
@@ -205,6 +225,19 @@ export default class JSerStat {
         return this.items.find(item =&gt; {
             return item.url === URL;
         });
+    }
+
+    /**
+     * `item` &#x3068;&#x95A2;&#x9023;&#x3059;&#x308B;JSerItem&#x306E;&#x914D;&#x5217;&#x3092;&#x8FD4;&#x3059;
+     * @param {JSerItem} item
+     * @param {number} limit
+     * @returns {JSerItem[]}
+     */
+    findRelatedItems(item, limit = 10) {
+        if (this.naturalSearch == null) {
+            this.naturalSearch = new NaturalSearcher(this.items);
+        }
+        return this.naturalSearch.findRelatedItems(item, limit);
     }
 }</code></pre>
 </div>

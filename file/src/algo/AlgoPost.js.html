@@ -38,6 +38,7 @@
 <li data-ice="classDoc"><span><a href="class/src/models/JSerPost.js~JSerPost.html">JSerPost</a></span></li>
 <li data-ice="classDoc"><span><a href="class/src/JSerStat.js~JSerStat.html">JSerStat</a></span></li>
 <li data-ice="classDoc"><span><a href="class/src/models/JSerWeek.js~JSerWeek.html">JSerWeek</a></span></li>
+<li data-ice="classDoc"><span><a href="class/src/natural/NaturalSearcher.js~NaturalSearcher.html">NaturalSearcher</a></span></li>
 </ul>
 </div>
 
@@ -90,7 +91,19 @@ export default class AlgoPost {
      * @returns {JSerPost[]}
      */
     findPostsBetween(beginDate, endDate) {
-        return findIndexesBetween(this.postTimeIndex, beginDate, endDate).map(itemIndex =&gt; this.posts[itemIndex]);
+        var indexes = findIndexesBetween(this.postTimeIndex, beginDate, endDate);
+        var first = indexes[0];
+        var last = indexes[indexes.length - 1];
+
+        if (indexes.length === 0) {
+            return [];
+        }
+        // [1, 0] or [ 1, -1]
+        if (first &gt; last &amp;&amp; last &lt;= 0) {
+            return [];
+        }
+        // [1, 10]
+        return this.posts.slice(first, last + 1);
     }
 
 }</code></pre>

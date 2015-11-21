@@ -42,6 +42,12 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
+    "jser-stat/src/natural/naturalsearcher.js~naturalsearcher",
+    "class/src/natural/NaturalSearcher.js~NaturalSearcher.html",
+    "<span>NaturalSearcher</span> <span class=\"search-result-import-path\">jser-stat/src/natural/NaturalSearcher.js</span>",
+    "class"
+  ],
+  [
     "jser-stat/src/compute/compute-tags.js~countbygroup",
     "function/index.html#static-function-countByGroup",
     "<span>countByGroup</span> <span class=\"search-result-import-path\">jser-stat/src/compute/compute-tags.js</span>",
@@ -432,6 +438,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/jserstat.js~jserstat#findrelateditems",
+    "class/src/JSerStat.js~JSerStat.html#instance-method-findRelatedItems",
+    "src/JSerStat.js~JSerStat#findRelatedItems",
+    "method"
+  ],
+  [
     "src/jserstat.js~jserstat#findweekwithitem",
     "class/src/JSerStat.js~JSerStat.html#instance-method-findWeekWithItem",
     "src/JSerStat.js~JSerStat#findWeekWithItem",
@@ -471,6 +483,12 @@ window.esdocSearchIndex = [
     "src/jserstat.js~jserstat#items",
     "class/src/JSerStat.js~JSerStat.html#instance-member-items",
     "src/JSerStat.js~JSerStat#items",
+    "member"
+  ],
+  [
+    "src/jserstat.js~jserstat#naturalsearch",
+    "class/src/JSerStat.js~JSerStat.html#instance-member-naturalSearch",
+    "src/JSerStat.js~JSerStat#naturalSearch",
     "member"
   ],
   [
@@ -543,6 +561,12 @@ window.esdocSearchIndex = [
     "src/algo/algosearch.js",
     "file/src/algo/algoSearch.js.html",
     "src/algo/algoSearch.js",
+    "file"
+  ],
+  [
+    "src/browser-index.js",
+    "file/src/browser-index.js.html",
+    "src/browser-index.js",
     "file"
   ],
   [
@@ -715,7 +739,7 @@ window.esdocSearchIndex = [
   ],
   [
     "src/models/jserweek.js~jserweek#items",
-    "class/src/models/JSerWeek.js~JSerWeek.html#instance-member-items",
+    "class/src/models/JSerWeek.js~JSerWeek.html#instance-get-items",
     "src/models/JSerWeek.js~JSerWeek#items",
     "member"
   ],
@@ -729,6 +753,42 @@ window.esdocSearchIndex = [
     "src/models/jserweek.js~jserweek#weeknumber",
     "class/src/models/JSerWeek.js~JSerWeek.html#instance-member-weekNumber",
     "src/models/JSerWeek.js~JSerWeek#weekNumber",
+    "member"
+  ],
+  [
+    "src/natural/naturalsearcher.js",
+    "file/src/natural/NaturalSearcher.js.html",
+    "src/natural/NaturalSearcher.js",
+    "file"
+  ],
+  [
+    "src/natural/naturalsearcher.js~naturalsearcher#additemsasdocuments",
+    "class/src/natural/NaturalSearcher.js~NaturalSearcher.html#instance-method-addItemsAsDocuments",
+    "src/natural/NaturalSearcher.js~NaturalSearcher#addItemsAsDocuments",
+    "method"
+  ],
+  [
+    "src/natural/naturalsearcher.js~naturalsearcher#constructor",
+    "class/src/natural/NaturalSearcher.js~NaturalSearcher.html#instance-constructor-constructor",
+    "src/natural/NaturalSearcher.js~NaturalSearcher#constructor",
+    "method"
+  ],
+  [
+    "src/natural/naturalsearcher.js~naturalsearcher#findrelateditems",
+    "class/src/natural/NaturalSearcher.js~NaturalSearcher.html#instance-method-findRelatedItems",
+    "src/natural/NaturalSearcher.js~NaturalSearcher#findRelatedItems",
+    "method"
+  ],
+  [
+    "src/natural/naturalsearcher.js~naturalsearcher#items",
+    "class/src/natural/NaturalSearcher.js~NaturalSearcher.html#instance-member-items",
+    "src/natural/NaturalSearcher.js~NaturalSearcher#items",
+    "member"
+  ],
+  [
+    "src/natural/naturalsearcher.js~naturalsearcher#tfidf",
+    "class/src/natural/NaturalSearcher.js~NaturalSearcher.html#instance-member-tfidf",
+    "src/natural/NaturalSearcher.js~NaturalSearcher#tfidf",
     "member"
   ]
 ]

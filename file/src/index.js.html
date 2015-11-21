@@ -38,6 +38,7 @@
 <li data-ice="classDoc"><span><a href="class/src/models/JSerPost.js~JSerPost.html">JSerPost</a></span></li>
 <li data-ice="classDoc"><span><a href="class/src/JSerStat.js~JSerStat.html">JSerStat</a></span></li>
 <li data-ice="classDoc"><span><a href="class/src/models/JSerWeek.js~JSerWeek.html">JSerWeek</a></span></li>
+<li data-ice="classDoc"><span><a href="class/src/natural/NaturalSearcher.js~NaturalSearcher.html">NaturalSearcher</a></span></li>
 </ul>
 </div>
 
@@ -65,8 +66,13 @@
 <div class="content" data-ice="content"><h1 data-ice="title">src/index.js</h1>
 <pre class="source-code line-number"><code class="prettyprint linenums" data-ice="content">// LICENSE : MIT
 &quot;use strict&quot;;
+const _Posts = require(&quot;../data/posts.json&quot;);
+const _Items = require(&quot;../data/items.json&quot;);
+const JSerStat = require(&quot;./JSerStat&quot;);
 module.exports = {
-    JSerStat: require(&quot;./JSerStat&quot;),
+    JSerStat: function _JSerStat(items = _Items, posts = _Posts) {
+        return new JSerStat(items, posts);
+    },
     compute: require(&quot;./compute/compute-tags&quot;)
 };</code></pre>
 </div>

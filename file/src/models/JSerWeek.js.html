@@ -38,6 +38,7 @@
 <li data-ice="classDoc"><span><a href="class/src/models/JSerPost.js~JSerPost.html">JSerPost</a></span></li>
 <li data-ice="classDoc"><span><a href="class/src/JSerStat.js~JSerStat.html">JSerStat</a></span></li>
 <li data-ice="classDoc"><span><a href="class/src/models/JSerWeek.js~JSerWeek.html">JSerWeek</a></span></li>
+<li data-ice="classDoc"><span><a href="class/src/natural/NaturalSearcher.js~NaturalSearcher.html">NaturalSearcher</a></span></li>
 </ul>
 </div>
 
@@ -75,9 +76,17 @@ export default class JSerWeek {
         this.endDate = currentPost.date;
         /** @type {JSerPost} */
         this.post = currentPost;
-        var pastDate = new Date(1995, 11, 17);
         /** @type {JSerItem[]} */
-        this.items = algoItem.findItemsBetween(this.beginDate || pastDate, this.endDate);
+        this._items = [];
+        this._algoItem = algoItem;
+    }
+
+    get items() {
+        if (this._items.length === 0) {
+            var pastDate = new Date(1995, 11, 17);
+            this._items = this._algoItem.findItemsBetween(this.beginDate || pastDate, this.endDate)
+        }
+        return this._items;
     }
 }</code></pre>
 </div>

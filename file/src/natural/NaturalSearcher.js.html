@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/natural/NaturalSearcher.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+</head>
+<body class="layout-container">
+
+<header>
+  <a href="./">Home</a>
+  <a href="identifiers.html">Identifier</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/jser/stat-js.git" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div data-ice="classWrap">
+  <h2>Class</h2>
+  <ul>
+    
+  <li data-ice="classDoc"><span><a href="class/src/algo/AlgoItem.js~AlgoItem.html">AlgoItem</a></span></li>
+<li data-ice="classDoc"><span><a href="class/src/algo/AlgoPost.js~AlgoPost.html">AlgoPost</a></span></li>
+<li data-ice="classDoc"><span><a href="class/src/models/JSerItem.js~JSerItem.html">JSerItem</a></span></li>
+<li data-ice="classDoc"><span><a href="class/src/models/JSerItemRelatedLink.js~JSerItemRelatedLink.html">JSerItemRelatedLink</a></span></li>
+<li data-ice="classDoc"><span><a href="class/src/models/JSerPost.js~JSerPost.html">JSerPost</a></span></li>
+<li data-ice="classDoc"><span><a href="class/src/JSerStat.js~JSerStat.html">JSerStat</a></span></li>
+<li data-ice="classDoc"><span><a href="class/src/models/JSerWeek.js~JSerWeek.html">JSerWeek</a></span></li>
+<li data-ice="classDoc"><span><a href="class/src/natural/NaturalSearcher.js~NaturalSearcher.html">NaturalSearcher</a></span></li>
+</ul>
+</div>
+
+
+
+<div data-ice="functionWrap">
+  <h2><a href="function/">Function</a></h2>
+  <ul>
+    
+  <li data-ice="functionDoc"><span><a href="function/index.html#static-function-countByGroup">countByGroup</a></span></li>
+<li data-ice="functionDoc"><span><a href="function/index.html#static-function-countTagsByGroup">countTagsByGroup</a></span></li>
+<li data-ice="functionDoc"><span><a href="function/index.html#static-function-findIndexBiggerTime">findIndexBiggerTime</a></span></li>
+<li data-ice="functionDoc"><span><a href="function/index.html#static-function-findIndexLessTime">findIndexLessTime</a></span></li>
+<li data-ice="functionDoc"><span><a href="function/index.html#static-function-findIndexesBetween">findIndexesBetween</a></span></li>
+</ul>
+</div>
+
+
+
+
+
+
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/natural/NaturalSearcher.js</h1>
+<pre class="source-code line-number"><code class="prettyprint linenums" data-ice="content">// LICENSE : MIT
+&quot;use strict&quot;;
+const TfIdf = require(&quot;natural/lib/natural/tfidf/tfidf&quot;);
+// merge sort
+let mergeSort = (arr) =&gt; {
+    if (arr.length &lt; 2) {
+        return arr;
+    }
+
+    let middle = parseInt(arr.length / 2),
+        left = arr.slice(0, middle),
+        right = arr.slice(middle);
+
+    return merge(mergeSort(left), mergeSort(right));
+};
+
+let merge = (left, right) =&gt; {
+    let result = [];
+
+    while (left.length &amp;&amp; right.length) {
+        right[0].measure &lt;= left[0].measure ?
+        result.push(left.shift()) :
+        result.push(right.shift());
+    }
+
+    while (left.length) {
+        result.push(left.shift());
+    }
+    while (right.length) {
+        result.push(right.shift());
+    }
+
+    return result;
+};
+var ignoreWord = function (word) {
+    if (word.length &lt;= 1) {
+        return false;
+    }
+    // &#x6570;&#x5B57;&#x3068;.&#x306E;&#x307F;&#x306F;&#x9664;&#x5916;
+    if (/^v?[\d\.]+$/.test(word)) {
+        return false;
+    }
+    if (/[\?&amp;=]/.test(word)) {
+        return false
+    }
+    if (/^\.(html|md|php)$/i.test(word)) {
+        return false
+    }
+    return true;
+};
+function urlToWords(url) {
+    var pathList = url.split(&quot;/&quot;);
+    var pathNames = pathList[pathList.length - 1].split(/([-_]|\.html$|\.md$|\.php$|#)/i);
+    return pathNames.filter(ignoreWord);
+
+}
+export default class NaturalSearcher {
+    constructor(items) {
+        this.items = items;
+        this.tfidf = new TfIdf();
+        this.addItemsAsDocuments(this.items);
+    }
+
+    addItemsAsDocuments(items) {
+        items.forEach((item) =&gt; {
+            var urlKeyString = urlToWords(item.url).join(&quot; &quot;);
+            var relatedString = item.relatedLinks.map(function (relatedObject) {
+                return relatedObject.title + &quot; &quot; + urlToWords(relatedObject.url).join(&quot; &quot;)
+            }).join(&quot;&quot;);
+            var tagsString = (item.tags || []).join(&quot; &quot;);
+            // &#x5168;&#x90E8;&#x3092;&#x4F7F;&#x3046;&#x3068;&#x9577;&#x3059;&#x304E;&#x308B;&#x30B3;&#x30F3;&#x30C6;&#x30F3;&#x30C4;&#x304C;&#x6709;&#x5229;&#x306B;&#x306A;&#x308A;&#x3059;&#x304E;&#x308B;&#x306E;&#x3067;&#x7D5E;&#x308B;
+            var slicedContent = item.content.slice(0, 200);
+            this.tfidf.addDocument(item.title + &quot;\n&quot; + tagsString + &quot;\n&quot; + slicedContent + &quot;\n&quot; + urlKeyString + &quot;\n&quot; + relatedString);
+        });
+    }
+
+    /**
+     *
+     * @param {JSerItem} targetItem
+     * @param {number} limit
+     */
+    findRelatedItems(targetItem, limit) {
+        var targetIndex = this.items.indexOf(targetItem);
+        if (targetIndex === -1) {
+            this.items.some(function (item, index) {
+                if (item.isEqualItem(item)) {
+                    targetIndex = index;
+                    return true;
+                }
+            });
+            if (targetIndex === -1) {
+                throw new Error(&quot;Not found this item: &quot; + targetItem);
+            }
+        }
+        var terms = this.tfidf.listTerms(targetIndex);
+        var results = [];
+        this.tfidf.tfidfs(terms.map(function (term) {
+            return term.term
+        }), function (i, measure) {
+            results.push({
+                index: i,
+                measure: measure
+            });
+        });
+        var sorted = mergeSort(results);
+        // tifidf -&gt; item
+        var matchItems = [];
+        for (var i = 0, len = Math.min(sorted.length, limit + 1); i &lt; len; i++) {
+            // &#x81EA;&#x5206;&#x81EA;&#x8EAB;&#x306F;&#x542B;&#x3081;&#x306A;&#x3044;
+            let matchItem = this.items[sorted[i].index];
+            if (this.items[targetIndex].isEqualItem(matchItem)) {
+                continue;
+            }
+            matchItems.push(matchItem);
+        }
+        return matchItems;
+    }
+}</code></pre>
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.2.1)</span></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

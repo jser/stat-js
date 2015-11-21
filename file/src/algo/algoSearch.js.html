@@ -38,6 +38,7 @@
 <li data-ice="classDoc"><span><a href="class/src/models/JSerPost.js~JSerPost.html">JSerPost</a></span></li>
 <li data-ice="classDoc"><span><a href="class/src/JSerStat.js~JSerStat.html">JSerStat</a></span></li>
 <li data-ice="classDoc"><span><a href="class/src/models/JSerWeek.js~JSerWeek.html">JSerWeek</a></span></li>
+<li data-ice="classDoc"><span><a href="class/src/natural/NaturalSearcher.js~NaturalSearcher.html">NaturalSearcher</a></span></li>
 </ul>
 </div>
 
@@ -65,15 +66,11 @@
 <div class="content" data-ice="content"><h1 data-ice="title">src/algo/algoSearch.js</h1>
 <pre class="source-code line-number"><code class="prettyprint linenums" data-ice="content">// LICENSE : MIT
 &quot;use strict&quot;;
+import binarysearch from &quot;binarysearch&quot;
 export function findIndexesBetween(times, beginDate, endDate) {
     var beginTime = beginDate.getTime();
     var endTime = endDate.getTime();
-    return times.reduce((indexes, time, index) =&gt; {
-        if (beginTime &lt;= time &amp;&amp; time &lt;= endTime) {
-            indexes.push(index);
-        }
-        return indexes;
-    }, []);
+    return binarysearch.range(times, beginTime, endTime);
 }
 export function findIndexBiggerTime(array, time) {
     var currentIndex = 0;
