@@ -1,5 +1,6 @@
 [
   {
+    "__docId__": 0,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -9,9 +10,61 @@
     "access": null,
     "description": null,
     "lineNumber": 2,
-    "content": "// LICENSE : MIT\n\"use strict\";\nrequire('array.prototype.find');\n\nimport Item from \"./models/JSerItem\"\nimport Post from \"./models/JSerPost\"\nimport Week from \"./models/JSerWeek\"\nimport AlgoItem from \"./algo/AlgoItem\"\nimport AlgoPost from \"./algo/AlgoPost.js\"\nimport NaturalSearcher from \"./natural/NaturalSearcher\"\nfunction filterJSerCategory(article) {\n    return /jser/i.test(article.category);\n}\nexport default class JSerStat {\n    constructor(rawItems, rawPosts) {\n        this._rawItems = rawItems ;\n        this._rawPosts = rawPosts;\n        /** @type {JSerItem[]} */\n        this.items = this._rawItems.map(function (item) {\n            return new Item(item);\n        });\n        // JSer カテゴリだけにする\n        /** @type {JSerPost[]} */\n        this.posts = this._rawPosts.filter(filterJSerCategory).map((post, index) => {\n            return new Post(index + 1, post);\n        });\n        /**\n         *\n         * @type {JSerWeek[]}\n         * @private\n         */\n        this._weeks = [];\n        /**\n         *  @type {AlgoItem}\n         *  @private\n         **/\n        this._algoItem = new AlgoItem(this.items);\n        /**\n         * @type {AlgoPost}\n         * @private\n         */\n        this._algoPost = new AlgoPost(this.posts);\n        /**\n         * @type {NaturalSearcher}\n         */\n        this.naturalSearch = null;\n    }\n\n    /**\n     * 全部で何週あるかを返す(投稿記事の数と一致)\n     * @returns {number}\n     */\n    getTotalWeekCount() {\n        return this.posts.length;\n    }\n\n    /**\n     * beginからendの範囲のJSerItemの配列を返す\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerItem[]}\n     */\n    findItemsBetween(beginDate, endDate) {\n        return this._algoItem.findItemsBetween(beginDate, endDate);\n    }\n\n    // deprecated\n    getItemsBetWeen(beginDate, endDate) {\n        return this.findItemsBetween(beginDate, endDate)\n    }\n\n    /**\n     * 全てのJSerWeekの配列を返す\n     * @returns {JSerWeek[]}\n     */\n    getJSerWeeks() {\n        if (this._weeks.length === 0) {\n            this._weeks = this.posts.reduce((results, currentPost, index)=> {\n                var prevPost = this.posts[index - 1];\n                var jserWeek = new Week(currentPost, prevPost, this._algoItem);\n                results.push(jserWeek);\n                return results;\n            }, []);\n        }\n        return this._weeks;\n    }\n\n    /**\n     * beginからendの範囲のJSerWeekの配列を返す\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerWeek[]}\n     */\n    findJSerWeeksBetween(beginDate, endDate) {\n        var algoPost = this._algoPost;\n        var posts = algoPost.findPostsBetween(beginDate, endDate);\n        return posts.reduce((results, currentPost, index)=> {\n            var prevPost = this.posts[index - 1];\n            var jserWeek = new Week(currentPost, prevPost, this._algoItem);\n            results.push(jserWeek);\n            return results;\n        }, []);\n    }\n\n    // deprecated\n    getJSerWeeksBetWeen(beginDate, endDate) {\n        return this.findJSerWeeksBetween(beginDate, endDate)\n    }\n\n    /**\n     * JSer.info #xxx を返す\n     * @param {number} number number start with 1\n     * @returns {JSerWeek}\n     */\n    findJSerWeek(number) {\n        if (number <= 0) {\n            throw new Error(`number:${number} should be >= 1`);\n        }\n        if (number > this.posts.length) {\n            return null;\n        }\n        var targetPost = this.posts[number - 1];\n        var prevPost = this.posts[number - 2];\n        return new Week(targetPost, prevPost, this._algoItem);\n    }\n\n    // deprecated\n    getJSerWeek(number) {\n        return this.findJSerWeek(number);\n    }\n\n    /**\n     * JSerItemを含んでいるJSerWeekを検索して返す.\n     * @param {Object} jserItem the jserItem is raw object for JSerItem\n     * @return {JSerWeek|null} The week contain this jserItem.\n     * 未来の記事などJSerWeekに所属していない場合もある\n     */\n    findWeekWithItem(jserItem) {\n        var targetItem = new Item(jserItem);\n        var tenDaysAfter = new Date(targetItem.date);\n        tenDaysAfter.setDate(targetItem.date.getDate() + 12);\n        var jSerWeeks = this.findJSerWeeksBetween(targetItem.date, tenDaysAfter);\n        return jSerWeeks.find(week => {\n            if (week.post.date < targetItem.date) {\n                return false;\n            }\n            return week.items.some(item => {\n                return targetItem.isEqualItem(item);\n            });\n        });\n    }\n\n    /**\n     * URLとマッチするJSerItemを返す\n     * @param {string} URL\n     * @return {JSerItem}\n     */\n    findItemWithURL(URL) {\n        return this.items.find(item => {\n            return item.url === URL;\n        });\n    }\n\n    /**\n     * `item` と関連するJSerItemの配列を返す\n     * @param {JSerItem} item\n     * @param {number} limit\n     * @returns {JSerItem[]}\n     */\n    findRelatedItems(item, limit = 10) {\n        if (this.naturalSearch == null) {\n            this.naturalSearch = new NaturalSearcher(this.items);\n        }\n        return this.naturalSearch.findRelatedItems(item, limit);\n    }\n}"
+    "content": "// LICENSE : MIT\n\"use strict\";\nrequire('array.prototype.find');\n\nimport Item from \"./models/JSerItem\"\nimport Post from \"./models/JSerPost\"\nimport Week from \"./models/JSerWeek\"\nimport AlgoItem from \"./algo/AlgoItem\"\nimport AlgoPost from \"./algo/AlgoPost.js\"\nimport NaturalSearcher from \"./natural/NaturalSearcher\"\nconst sortBy = require(\"lodash.sortby\");\nfunction sortByDate(items) {\n    return sortBy(items, (item) => {\n        return item.date;\n    });\n}\nfunction filterJSerCategory(article) {\n    return /jser/i.test(article.category);\n}\nmodule.exports = class JSerStat {\n    constructor(rawItems, rawPosts) {\n        this._rawItems = rawItems;\n        this._rawPosts = rawPosts;\n        /**\n         * 日付で昇順にsortされたItems\n         * @type {JSerItem[]}\n         * */\n        this.items = sortByDate(this._rawItems).map(function(item) {\n            return new Item(item);\n        });\n        /**\n         * 日付で昇順にsortされてposts\n         *  @type {JSerPost[]}\n         **/\n        this.posts = sortByDate(this._rawPosts)\n        .filter(filterJSerCategory)\n        .map((post, index) => {\n            return new Post(index + 1, post);\n        });\n        /**\n         *\n         * @type {JSerWeek[]}\n         * @private\n         */\n        this._weeks = [];\n        /**\n         *  @type {AlgoItem}\n         *  @private\n         **/\n        this._algoItem = new AlgoItem(this.items);\n        /**\n         * @type {AlgoPost}\n         * @private\n         */\n        this._algoPost = new AlgoPost(this.posts);\n        /**\n         * @type {NaturalSearcher}\n         */\n        this.naturalSearch = null;\n    }\n\n    /**\n     * 全部で何週あるかを返す(投稿記事の数と一致)\n     * @returns {number}\n     */\n    getTotalWeekCount() {\n        return this.posts.length;\n    }\n\n    /**\n     * beginからendの範囲のJSerItemの配列を返す\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerItem[]}\n     */\n    findItemsBetween(beginDate, endDate) {\n        return this._algoItem.findItemsBetween(beginDate, endDate);\n    }\n\n    // deprecated\n    getItemsBetWeen(beginDate, endDate) {\n        return this.findItemsBetween(beginDate, endDate)\n    }\n\n    /**\n     * 全てのJSerWeekの配列を返す\n     * @returns {JSerWeek[]}\n     */\n    getJSerWeeks() {\n        if (this._weeks.length === 0) {\n            this._weeks = this.posts.reduce((results, currentPost, index) => {\n                var prevPost = this.posts[index - 1];\n                var jserWeek = new Week(currentPost, prevPost, this._algoItem);\n                results.push(jserWeek);\n                return results;\n            }, []);\n        }\n        return this._weeks;\n    }\n\n    /**\n     * beginからendの範囲に含まれるJSerWeekの配列を返す\n     * JSerWeek#beginDate または JSerWeek#endDate どちらかがかかれば含まれると判断される\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerWeek[]}\n     */\n    findJSerWeeksBetween(beginDate, endDate) {\n        const weeks = this.getJSerWeeks();\n        const beginTime = beginDate.getTime();\n        const endTime = endDate.getTime();\n        return weeks.filter(week => {\n            const weekBeginTime = week.beginDate.getTime();\n            const weekEndTime = week.endDate.getTime();\n            if (beginTime <= weekBeginTime && weekBeginTime <= endTime) {\n                return true;\n            }\n            if (beginTime <= weekEndTime && weekEndTime <= endTime) {\n                return true;\n            }\n            return false;\n        });\n    }\n\n    // deprecated\n    getJSerWeeksBetWeen(beginDate, endDate) {\n        return this.findJSerWeeksBetween(beginDate, endDate)\n    }\n\n    /**\n     * JSer.info #xxx を返す\n     * @param {number} number number start with 1\n     * @returns {JSerWeek}\n     */\n    findJSerWeek(number) {\n        if (number <= 0) {\n            throw new Error(`number:${number} should be >= 1`);\n        }\n        if (number > this.posts.length) {\n            return null;\n        }\n        var targetPost = this.posts[number - 1];\n        var prevPost = this.posts[number - 2];\n        return new Week(targetPost, prevPost, this._algoItem);\n    }\n\n    /**\n     * `postURL`に一致するJSerWeekを返す\n     * @param {string} postURL\n     * @returns {JSerWeek}\n     */\n    findJSerWeekWithURL(postURL) {\n        const weeks = this.getJSerWeeks().filter(week => {\n            return week.post.url === postURL;\n        });\n        if (weeks.length > 0) {\n            return weeks[0];\n        }\n    }\n\n    // deprecated\n    getJSerWeek(number) {\n        return this.findJSerWeek(number);\n    }\n\n    /**\n     * JSerItemを含んでいるJSerWeekを検索して返す.\n     * @param {Object} jserItem the jserItem is raw object for JSerItem\n     * @return {JSerWeek|null} The week contain this jserItem.\n     * 未来の記事などJSerWeekに所属していない場合もある\n     */\n    findWeekWithItem(jserItem) {\n        const targetItem = new Item(jserItem);\n        const tenDaysAfter = new Date(targetItem.date);\n        tenDaysAfter.setDate(targetItem.date.getDate() + 10);\n        const jSerWeeks = this.findJSerWeeksBetween(targetItem.date, tenDaysAfter);\n        return jSerWeeks.find(week => {\n            if (week.post.date < targetItem.date) {\n                return false;\n            }\n            return week.items.some(item => {\n                return targetItem.isEqualItem(item);\n            });\n        });\n    }\n\n    /**\n     * URLとマッチするJSerItemを返す\n     * @param {string} URL\n     * @return {JSerItem}\n     */\n    findItemWithURL(URL) {\n        return this.items.find(item => {\n            return item.url === URL;\n        });\n    }\n\n    /**\n     * `item` と関連するJSerItemの配列を返す\n     * @param {JSerItem} item\n     * @param {number} limit\n     * @returns {JSerItem[]}\n     */\n    findRelatedItems(item, limit = 10) {\n        if (this.naturalSearch == null) {\n            this.naturalSearch = new NaturalSearcher(this.items);\n        }\n        return this.naturalSearch.findRelatedItems(item, limit);\n    }\n}"
   },
   {
+    "__docId__": 1,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "sortBy",
+    "memberof": "src/JSerStat.js",
+    "longname": "src/JSerStat.js~sortBy",
+    "access": null,
+    "export": false,
+    "importPath": "jser-stat/src/JSerStat.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 11,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 2,
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "sortByDate",
+    "memberof": "src/JSerStat.js",
+    "longname": "src/JSerStat.js~sortByDate",
+    "access": null,
+    "export": false,
+    "importPath": "jser-stat/src/JSerStat.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 12,
+    "undocument": true,
+    "params": [
+      {
+        "name": "items",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 3,
     "kind": "function",
     "static": true,
     "variation": null,
@@ -23,7 +76,7 @@
     "importPath": "jser-stat/src/JSerStat.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 11,
+    "lineNumber": 17,
     "undocument": true,
     "params": [
       {
@@ -41,31 +94,33 @@
     "generator": false
   },
   {
+    "__docId__": 4,
     "kind": "class",
     "static": true,
     "variation": null,
-    "name": "JSerStat",
+    "name": "exports",
     "memberof": "src/JSerStat.js",
-    "longname": "src/JSerStat.js~JSerStat",
+    "longname": "src/JSerStat.js~exports",
     "access": null,
-    "export": true,
+    "export": false,
     "importPath": "jser-stat/src/JSerStat.js",
-    "importStyle": "JSerStat",
+    "importStyle": null,
     "description": null,
-    "lineNumber": 14,
+    "lineNumber": 20,
     "undocument": true,
     "interface": false
   },
   {
+    "__docId__": 5,
     "kind": "constructor",
     "static": false,
     "variation": null,
     "name": "constructor",
-    "memberof": "src/JSerStat.js~JSerStat",
-    "longname": "src/JSerStat.js~JSerStat#constructor",
+    "memberof": "src/JSerStat.js~exports",
+    "longname": "src/JSerStat.js~exports#constructor",
     "access": null,
     "description": null,
-    "lineNumber": 15,
+    "lineNumber": 21,
     "undocument": true,
     "params": [
       {
@@ -84,15 +139,16 @@
     "generator": false
   },
   {
+    "__docId__": 6,
     "kind": "member",
     "static": false,
     "variation": null,
     "name": "_rawItems",
-    "memberof": "src/JSerStat.js~JSerStat",
-    "longname": "src/JSerStat.js~JSerStat#_rawItems",
+    "memberof": "src/JSerStat.js~exports",
+    "longname": "src/JSerStat.js~exports#_rawItems",
     "access": null,
     "description": null,
-    "lineNumber": 16,
+    "lineNumber": 22,
     "undocument": true,
     "type": {
       "types": [
@@ -101,15 +157,16 @@
     }
   },
   {
+    "__docId__": 7,
     "kind": "member",
     "static": false,
     "variation": null,
     "name": "_rawPosts",
-    "memberof": "src/JSerStat.js~JSerStat",
-    "longname": "src/JSerStat.js~JSerStat#_rawPosts",
+    "memberof": "src/JSerStat.js~exports",
+    "longname": "src/JSerStat.js~exports#_rawPosts",
     "access": null,
     "description": null,
-    "lineNumber": 17,
+    "lineNumber": 23,
     "undocument": true,
     "type": {
       "types": [
@@ -118,15 +175,16 @@
     }
   },
   {
+    "__docId__": 8,
     "kind": "member",
     "static": false,
     "variation": null,
     "name": "items",
-    "memberof": "src/JSerStat.js~JSerStat",
-    "longname": "src/JSerStat.js~JSerStat#items",
+    "memberof": "src/JSerStat.js~exports",
+    "longname": "src/JSerStat.js~exports#items",
     "access": null,
-    "description": null,
-    "lineNumber": 19,
+    "description": "日付で昇順にsortされたItems",
+    "lineNumber": 28,
     "type": {
       "nullable": null,
       "types": [
@@ -137,15 +195,16 @@
     }
   },
   {
+    "__docId__": 9,
     "kind": "member",
     "static": false,
     "variation": null,
     "name": "posts",
-    "memberof": "src/JSerStat.js~JSerStat",
-    "longname": "src/JSerStat.js~JSerStat#posts",
+    "memberof": "src/JSerStat.js~exports",
+    "longname": "src/JSerStat.js~exports#posts",
     "access": null,
-    "description": null,
-    "lineNumber": 24,
+    "description": "日付で昇順にsortされてposts",
+    "lineNumber": 35,
     "type": {
       "nullable": null,
       "types": [
@@ -156,15 +215,16 @@
     }
   },
   {
+    "__docId__": 10,
     "kind": "member",
     "static": false,
     "variation": null,
     "name": "_weeks",
-    "memberof": "src/JSerStat.js~JSerStat",
-    "longname": "src/JSerStat.js~JSerStat#_weeks",
+    "memberof": "src/JSerStat.js~exports",
+    "longname": "src/JSerStat.js~exports#_weeks",
     "access": "private",
     "description": "",
-    "lineNumber": 32,
+    "lineNumber": 45,
     "type": {
       "nullable": null,
       "types": [
@@ -175,31 +235,36 @@
     }
   },
   {
+    "__docId__": 11,
     "kind": "member",
     "static": false,
     "variation": null,
     "name": "_algoItem",
-    "memberof": "src/JSerStat.js~JSerStat",
-    "longname": "src/JSerStat.js~JSerStat#_algoItem",
-    "access": null,
-    "description": " @type {AlgoItem}\n @private",
-    "lineNumber": 37,
+    "memberof": "src/JSerStat.js~exports",
+    "longname": "src/JSerStat.js~exports#_algoItem",
+    "access": "private",
+    "description": "",
+    "lineNumber": 50,
     "type": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
+        "AlgoItem"
+      ],
+      "spread": false,
+      "description": null
     }
   },
   {
+    "__docId__": 12,
     "kind": "member",
     "static": false,
     "variation": null,
     "name": "_algoPost",
-    "memberof": "src/JSerStat.js~JSerStat",
-    "longname": "src/JSerStat.js~JSerStat#_algoPost",
+    "memberof": "src/JSerStat.js~exports",
+    "longname": "src/JSerStat.js~exports#_algoPost",
     "access": "private",
-    "description": null,
-    "lineNumber": 42,
+    "description": "",
+    "lineNumber": 55,
     "type": {
       "nullable": null,
       "types": [
@@ -210,15 +275,16 @@
     }
   },
   {
+    "__docId__": 13,
     "kind": "member",
     "static": false,
     "variation": null,
     "name": "naturalSearch",
-    "memberof": "src/JSerStat.js~JSerStat",
-    "longname": "src/JSerStat.js~JSerStat#naturalSearch",
+    "memberof": "src/JSerStat.js~exports",
+    "longname": "src/JSerStat.js~exports#naturalSearch",
     "access": null,
-    "description": null,
-    "lineNumber": 46,
+    "description": "",
+    "lineNumber": 59,
     "type": {
       "nullable": null,
       "types": [
@@ -229,15 +295,16 @@
     }
   },
   {
+    "__docId__": 14,
     "kind": "method",
     "static": false,
     "variation": null,
     "name": "getTotalWeekCount",
-    "memberof": "src/JSerStat.js~JSerStat",
-    "longname": "src/JSerStat.js~JSerStat#getTotalWeekCount",
+    "memberof": "src/JSerStat.js~exports",
+    "longname": "src/JSerStat.js~exports#getTotalWeekCount",
     "access": null,
     "description": "全部で何週あるかを返す(投稿記事の数と一致)",
-    "lineNumber": 53,
+    "lineNumber": 66,
     "unknown": [
       {
         "tagName": "@returns",
@@ -256,15 +323,16 @@
     "generator": false
   },
   {
+    "__docId__": 15,
     "kind": "method",
     "static": false,
     "variation": null,
     "name": "findItemsBetween",
-    "memberof": "src/JSerStat.js~JSerStat",
-    "longname": "src/JSerStat.js~JSerStat#findItemsBetween",
+    "memberof": "src/JSerStat.js~exports",
+    "longname": "src/JSerStat.js~exports#findItemsBetween",
     "access": null,
     "description": "beginからendの範囲のJSerItemの配列を返す",
-    "lineNumber": 63,
+    "lineNumber": 76,
     "unknown": [
       {
         "tagName": "@returns",
@@ -304,15 +372,16 @@
     "generator": false
   },
   {
+    "__docId__": 16,
     "kind": "method",
     "static": false,
     "variation": null,
     "name": "getItemsBetWeen",
-    "memberof": "src/JSerStat.js~JSerStat",
-    "longname": "src/JSerStat.js~JSerStat#getItemsBetWeen",
+    "memberof": "src/JSerStat.js~exports",
+    "longname": "src/JSerStat.js~exports#getItemsBetWeen",
     "access": null,
     "description": null,
-    "lineNumber": 68,
+    "lineNumber": 81,
     "undocument": true,
     "params": [
       {
@@ -336,15 +405,16 @@
     "generator": false
   },
   {
+    "__docId__": 17,
     "kind": "method",
     "static": false,
     "variation": null,
     "name": "getJSerWeeks",
-    "memberof": "src/JSerStat.js~JSerStat",
-    "longname": "src/JSerStat.js~JSerStat#getJSerWeeks",
+    "memberof": "src/JSerStat.js~exports",
+    "longname": "src/JSerStat.js~exports#getJSerWeeks",
     "access": null,
     "description": "全てのJSerWeekの配列を返す",
-    "lineNumber": 76,
+    "lineNumber": 89,
     "unknown": [
       {
         "tagName": "@returns",
@@ -363,15 +433,16 @@
     "generator": false
   },
   {
+    "__docId__": 18,
     "kind": "member",
     "static": false,
     "variation": null,
     "name": "_weeks",
-    "memberof": "src/JSerStat.js~JSerStat",
-    "longname": "src/JSerStat.js~JSerStat#_weeks",
+    "memberof": "src/JSerStat.js~exports",
+    "longname": "src/JSerStat.js~exports#_weeks",
     "access": null,
     "description": null,
-    "lineNumber": 78,
+    "lineNumber": 91,
     "undocument": true,
     "type": {
       "types": [
@@ -380,15 +451,16 @@
     }
   },
   {
+    "__docId__": 19,
     "kind": "method",
     "static": false,
     "variation": null,
     "name": "findJSerWeeksBetween",
-    "memberof": "src/JSerStat.js~JSerStat",
-    "longname": "src/JSerStat.js~JSerStat#findJSerWeeksBetween",
+    "memberof": "src/JSerStat.js~exports",
+    "longname": "src/JSerStat.js~exports#findJSerWeeksBetween",
     "access": null,
-    "description": "beginからendの範囲のJSerWeekの配列を返す",
-    "lineNumber": 94,
+    "description": "beginからendの範囲に含まれるJSerWeekの配列を返す\nJSerWeek#beginDate または JSerWeek#endDate どちらかがかかれば含まれると判断される",
+    "lineNumber": 108,
     "unknown": [
       {
         "tagName": "@returns",
@@ -428,15 +500,16 @@
     "generator": false
   },
   {
+    "__docId__": 20,
     "kind": "method",
     "static": false,
     "variation": null,
     "name": "getJSerWeeksBetWeen",
-    "memberof": "src/JSerStat.js~JSerStat",
-    "longname": "src/JSerStat.js~JSerStat#getJSerWeeksBetWeen",
+    "memberof": "src/JSerStat.js~exports",
+    "longname": "src/JSerStat.js~exports#getJSerWeeksBetWeen",
     "access": null,
     "description": null,
-    "lineNumber": 106,
+    "lineNumber": 126,
     "undocument": true,
     "params": [
       {
@@ -460,15 +533,16 @@
     "generator": false
   },
   {
+    "__docId__": 21,
     "kind": "method",
     "static": false,
     "variation": null,
     "name": "findJSerWeek",
-    "memberof": "src/JSerStat.js~JSerStat",
-    "longname": "src/JSerStat.js~JSerStat#findJSerWeek",
+    "memberof": "src/JSerStat.js~exports",
+    "longname": "src/JSerStat.js~exports#findJSerWeek",
     "access": null,
     "description": "JSer.info #xxx を返す",
-    "lineNumber": 115,
+    "lineNumber": 135,
     "unknown": [
       {
         "tagName": "@returns",
@@ -498,15 +572,55 @@
     "generator": false
   },
   {
+    "__docId__": 22,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "findJSerWeekWithURL",
+    "memberof": "src/JSerStat.js~exports",
+    "longname": "src/JSerStat.js~exports#findJSerWeekWithURL",
+    "access": null,
+    "description": "`postURL`に一致するJSerWeekを返す",
+    "lineNumber": 152,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{JSerWeek}"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "postURL",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "JSerWeek"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 23,
     "kind": "method",
     "static": false,
     "variation": null,
     "name": "getJSerWeek",
-    "memberof": "src/JSerStat.js~JSerStat",
-    "longname": "src/JSerStat.js~JSerStat#getJSerWeek",
+    "memberof": "src/JSerStat.js~exports",
+    "longname": "src/JSerStat.js~exports#getJSerWeek",
     "access": null,
     "description": null,
-    "lineNumber": 128,
+    "lineNumber": 162,
     "undocument": true,
     "params": [
       {
@@ -524,15 +638,16 @@
     "generator": false
   },
   {
+    "__docId__": 24,
     "kind": "method",
     "static": false,
     "variation": null,
     "name": "findWeekWithItem",
-    "memberof": "src/JSerStat.js~JSerStat",
-    "longname": "src/JSerStat.js~JSerStat#findWeekWithItem",
+    "memberof": "src/JSerStat.js~exports",
+    "longname": "src/JSerStat.js~exports#findWeekWithItem",
     "access": null,
     "description": "JSerItemを含んでいるJSerWeekを検索して返す.",
-    "lineNumber": 138,
+    "lineNumber": 172,
     "params": [
       {
         "nullable": null,
@@ -557,15 +672,16 @@
     "generator": false
   },
   {
+    "__docId__": 25,
     "kind": "method",
     "static": false,
     "variation": null,
     "name": "findItemWithURL",
-    "memberof": "src/JSerStat.js~JSerStat",
-    "longname": "src/JSerStat.js~JSerStat#findItemWithURL",
+    "memberof": "src/JSerStat.js~exports",
+    "longname": "src/JSerStat.js~exports#findItemWithURL",
     "access": null,
     "description": "URLとマッチするJSerItemを返す",
-    "lineNumber": 158,
+    "lineNumber": 192,
     "params": [
       {
         "nullable": null,
@@ -589,15 +705,16 @@
     "generator": false
   },
   {
+    "__docId__": 26,
     "kind": "method",
     "static": false,
     "variation": null,
     "name": "findRelatedItems",
-    "memberof": "src/JSerStat.js~JSerStat",
-    "longname": "src/JSerStat.js~JSerStat#findRelatedItems",
+    "memberof": "src/JSerStat.js~exports",
+    "longname": "src/JSerStat.js~exports#findRelatedItems",
     "access": null,
     "description": "`item` と関連するJSerItemの配列を返す",
-    "lineNumber": 170,
+    "lineNumber": 204,
     "unknown": [
       {
         "tagName": "@returns",
@@ -637,15 +754,16 @@
     "generator": false
   },
   {
+    "__docId__": 27,
     "kind": "member",
     "static": false,
     "variation": null,
     "name": "naturalSearch",
-    "memberof": "src/JSerStat.js~JSerStat",
-    "longname": "src/JSerStat.js~JSerStat#naturalSearch",
+    "memberof": "src/JSerStat.js~exports",
+    "longname": "src/JSerStat.js~exports#naturalSearch",
     "access": null,
     "description": null,
-    "lineNumber": 172,
+    "lineNumber": 206,
     "undocument": true,
     "type": {
       "types": [
@@ -654,6 +772,7 @@
     }
   },
   {
+    "__docId__": 28,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -663,9 +782,10 @@
     "access": null,
     "description": null,
     "lineNumber": 2,
-    "content": "// LICENSE : MIT\n\"use strict\";\nimport {findIndexesBetween} from \"./algoSearch.js\"\n\n// for algorithm\nexport default class AlgoItem {\n    /**\n     *\n     * @param {JSerItem[]} items\n     */\n    constructor(items) {\n        this.items = items;\n        /**\n         * @type number[] 昇順となった各Itemのtime配列\n         */\n        this.itemTimes = items.map(function (item) {\n            return item.date.getTime();\n        });\n    }\n\n    /**\n     *\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerItem[]}\n     */\n    findItemsBetween(beginDate, endDate) {\n        var indexes = findIndexesBetween(this.itemTimes, beginDate, endDate);\n        var first = indexes[0];\n        var last = indexes[indexes.length - 1];\n        if (indexes.length === 0) {\n            return [];\n        }\n        if (first > last) {\n            return [];\n        }\n        return this.items.slice(first, last + 1);\n    }\n}"
+    "content": "// LICENSE : MIT\n\"use strict\";\nimport {findIndexesBetween} from \"./algoSearch.js\"\n\n// for algorithm\nexport default class AlgoItem {\n    /**\n     *\n     * @param {JSerItem[]} items\n     */\n    constructor(items) {\n        this.items = items;\n        /**\n         * @type number[] 昇順となった各Itemのtime配列\n         */\n        this.itemTimes = items.map(function (item) {\n            return item.date.getTime();\n        });\n    }\n\n    /**\n     *\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerItem[]}\n     */\n    findItemsBetween(beginDate, endDate) {\n        const indexes = findIndexesBetween(this.itemTimes, beginDate, endDate);\n        const first = indexes[0];\n        const last = indexes[indexes.length - 1];\n        if (indexes.length === 0) {\n            return [];\n        }\n        if (first > last) {\n            return [];\n        }\n        return this.items.slice(first, last + 1);\n    }\n}"
   },
   {
+    "__docId__": 29,
     "kind": "class",
     "static": true,
     "variation": null,
@@ -682,6 +802,7 @@
     "interface": false
   },
   {
+    "__docId__": 30,
     "kind": "constructor",
     "static": false,
     "variation": null,
@@ -706,6 +827,7 @@
     "generator": false
   },
   {
+    "__docId__": 31,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -723,6 +845,7 @@
     }
   },
   {
+    "__docId__": 32,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -730,7 +853,7 @@
     "memberof": "src/algo/AlgoItem.js~AlgoItem",
     "longname": "src/algo/AlgoItem.js~AlgoItem#itemTimes",
     "access": null,
-    "description": null,
+    "description": "",
     "lineNumber": 16,
     "type": {
       "nullable": null,
@@ -742,6 +865,7 @@
     }
   },
   {
+    "__docId__": 33,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -790,6 +914,7 @@
     "generator": false
   },
   {
+    "__docId__": 34,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -802,6 +927,7 @@
     "content": "// LICENSE : MIT\n\"use strict\";\nimport {findIndexesBetween} from \"./algoSearch.js\"\n\n// for algorithm\nexport default class AlgoPost {\n    /**\n     *\n     * @param {JSerPost[]} posts\n     */\n    constructor(posts) {\n        this.posts = posts;\n        /**\n         * @type number[] 昇順となった各Postのtime配列\n         */\n        this.postTimeIndex = posts.map(function (post) {\n            return post.date.getTime();\n        });\n    }\n\n    /**\n     *\n     * @param {Date} beginDate\n     * @param {Date} endDate\n     * @returns {JSerPost[]}\n     */\n    findPostsBetween(beginDate, endDate) {\n        var indexes = findIndexesBetween(this.postTimeIndex, beginDate, endDate);\n        var first = indexes[0];\n        var last = indexes[indexes.length - 1];\n\n        if (indexes.length === 0) {\n            return [];\n        }\n        // [1, 0] or [ 1, -1]\n        if (first > last && last <= 0) {\n            return [];\n        }\n        // [1, 10]\n        return this.posts.slice(first, last + 1);\n    }\n\n}"
   },
   {
+    "__docId__": 35,
     "kind": "class",
     "static": true,
     "variation": null,
@@ -818,6 +944,7 @@
     "interface": false
   },
   {
+    "__docId__": 36,
     "kind": "constructor",
     "static": false,
     "variation": null,
@@ -842,6 +969,7 @@
     "generator": false
   },
   {
+    "__docId__": 37,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -859,6 +987,7 @@
     }
   },
   {
+    "__docId__": 38,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -866,7 +995,7 @@
     "memberof": "src/algo/AlgoPost.js~AlgoPost",
     "longname": "src/algo/AlgoPost.js~AlgoPost#postTimeIndex",
     "access": null,
-    "description": null,
+    "description": "",
     "lineNumber": 16,
     "type": {
       "nullable": null,
@@ -878,6 +1007,7 @@
     }
   },
   {
+    "__docId__": 39,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -926,6 +1056,7 @@
     "generator": false
   },
   {
+    "__docId__": 40,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -938,6 +1069,7 @@
     "content": "// LICENSE : MIT\n\"use strict\";\nimport binarysearch from \"binarysearch\"\nexport function findIndexesBetween(times, beginDate, endDate) {\n    var beginTime = beginDate.getTime();\n    var endTime = endDate.getTime();\n    return binarysearch.range(times, beginTime, endTime);\n}\nexport function findIndexBiggerTime(array, time) {\n    var currentIndex = 0;\n    for (var i = currentIndex; i < array.length; i++) {\n        var comparedTime = array[i];\n        if (time >= comparedTime) {\n            currentIndex = i;\n        } else {\n            // timeより大きいものが出てきたら直前のものを返す\n            return currentIndex;\n        }\n    }\n    return -1\n}\n\nexport function findIndexLessTime(array, time) {\n    var currentIndex = array.length - 1;\n    for (var i = currentIndex; i >= 0; i--) {\n        var comparedTime = array[i];\n        if (time < comparedTime) {\n            currentIndex = i;\n        } else {\n            // timeよりも小さいものが出てきたら直前のものを返す\n            return currentIndex;\n        }\n    }\n    return -1;\n}\n\nfunction compare_number(a, b) {\n    return a - b;\n}"
   },
   {
+    "__docId__": 41,
     "kind": "function",
     "static": true,
     "variation": null,
@@ -979,6 +1111,7 @@
     "generator": false
   },
   {
+    "__docId__": 42,
     "kind": "function",
     "static": true,
     "variation": null,
@@ -1014,6 +1147,7 @@
     "generator": false
   },
   {
+    "__docId__": 43,
     "kind": "function",
     "static": true,
     "variation": null,
@@ -1049,6 +1183,7 @@
     "generator": false
   },
   {
+    "__docId__": 44,
     "kind": "function",
     "static": true,
     "variation": null,
@@ -1084,6 +1219,7 @@
     "generator": false
   },
   {
+    "__docId__": 45,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -1096,6 +1232,7 @@
     "content": "// LICENSE : MIT\n\"use strict\";\nmodule.exports = {\n    JSerStat: require(\"./JSerStat\"),\n    compute: require(\"./compute/compute-tags\")\n};"
   },
   {
+    "__docId__": 46,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -1108,6 +1245,7 @@
     "content": "// LICENSE : MIT\n\"use strict\";\n/**\n * {タグ名:出現回数}のオブジェクトを返す\n * @param {JSerWeek[]} weeks\n * @returns {{string:number}}\n */\nexport function countTagsByGroup(weeks) {\n    return countByGroup(weeks, function (item) {\n        var rank = {};\n        item.tags.forEach(function (tag) {\n            rank[tag] = ++rank[tag] || 1;\n        });\n        return rank;\n    });\n}\nexport function countByGroup(weeks, countFn) {\n    var rank = {};\n    weeks.forEach(function (week) {\n        week.items.forEach(function (item) {\n            var ret = countFn(item);\n            var keys = Object.keys(ret);\n            keys.forEach(function (key) {\n                rank[key] = (rank[key] || 0) + ret[key];\n            });\n        });\n    });\n    return rank;\n}"
   },
   {
+    "__docId__": 47,
     "kind": "function",
     "static": true,
     "variation": null,
@@ -1149,6 +1287,7 @@
     "generator": false
   },
   {
+    "__docId__": 48,
     "kind": "function",
     "static": true,
     "variation": null,
@@ -1184,6 +1323,7 @@
     "generator": false
   },
   {
+    "__docId__": 49,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -1193,9 +1333,10 @@
     "access": null,
     "description": null,
     "lineNumber": 2,
-    "content": "// LICENSE : MIT\n\"use strict\";\nconst _Posts = require(\"../data/posts.json\");\nconst _Items = require(\"../data/items.json\");\nconst JSerStat = require(\"./JSerStat\");\nmodule.exports = {\n    JSerStat: function _JSerStat(items = _Items, posts = _Posts) {\n        return new JSerStat(items, posts);\n    },\n    compute: require(\"./compute/compute-tags\")\n};"
+    "content": "// LICENSE : MIT\n\"use strict\";\nconst _Posts = require(\"../data/posts.json\");\nconst _Items = require(\"../data/items.json\");\nimport JSerStat from \"./JSerStat\";\nmodule.exports = {\n    JSerStat: function _JSerStat(items = _Items, posts = _Posts) {\n        return new JSerStat(items, posts);\n    },\n    compute: require(\"./compute/compute-tags\")\n};"
   },
   {
+    "__docId__": 50,
     "kind": "variable",
     "static": true,
     "variation": null,
@@ -1216,6 +1357,7 @@
     }
   },
   {
+    "__docId__": 51,
     "kind": "variable",
     "static": true,
     "variation": null,
@@ -1236,26 +1378,7 @@
     }
   },
   {
-    "kind": "variable",
-    "static": true,
-    "variation": null,
-    "name": "JSerStat",
-    "memberof": "src/index.js",
-    "longname": "src/index.js~JSerStat",
-    "access": null,
-    "export": false,
-    "importPath": "jser-stat/src/index.js",
-    "importStyle": null,
-    "description": null,
-    "lineNumber": 5,
-    "undocument": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
+    "__docId__": 52,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -1268,6 +1391,7 @@
     "content": "// LICENSE : MIT\n\"use strict\";\nimport assert from \"assert\"\nimport RelatedLink from \"./JSerItemRelatedLink\"\nexport default class JSerItem {\n    constructor(item) {\n        /** @type {string} */\n        this.title = item[\"title\"];\n        /** @type {string} */\n        this.url = item[\"url\"];\n        /** @type {string} */\n        this.content = item[\"content\"];\n        /** @type {string[]} */\n        this.tags = item[\"tags\"] || [];\n        /** @type {Date} */\n        this.date = new Date(item[\"date\"]);\n        var relatedLinks = item[\"relatedLinks\"] || [];\n        /** @type {JSerItemRelatedLink[]} */\n        this.relatedLinks = relatedLinks.map(function (link) {\n            return new RelatedLink(link);\n        });\n    }\n\n    /**\n     * @param {JSerItem} item\n     * @returns {boolean}\n     */\n    isEqualItem(item) {\n        assert(item != null, \"item should not be null\");\n        return this.url === item.url;\n    }\n}"
   },
   {
+    "__docId__": 53,
     "kind": "class",
     "static": true,
     "variation": null,
@@ -1284,6 +1408,7 @@
     "interface": false
   },
   {
+    "__docId__": 54,
     "kind": "constructor",
     "static": false,
     "variation": null,
@@ -1305,6 +1430,7 @@
     "generator": false
   },
   {
+    "__docId__": 55,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -1324,6 +1450,7 @@
     }
   },
   {
+    "__docId__": 56,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -1343,6 +1470,7 @@
     }
   },
   {
+    "__docId__": 57,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -1362,6 +1490,7 @@
     }
   },
   {
+    "__docId__": 58,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -1381,6 +1510,7 @@
     }
   },
   {
+    "__docId__": 59,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -1400,6 +1530,7 @@
     }
   },
   {
+    "__docId__": 60,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -1419,6 +1550,7 @@
     }
   },
   {
+    "__docId__": 61,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -1426,7 +1558,7 @@
     "memberof": "src/models/JSerItem.js~JSerItem",
     "longname": "src/models/JSerItem.js~JSerItem#isEqualItem",
     "access": null,
-    "description": null,
+    "description": "",
     "lineNumber": 28,
     "unknown": [
       {
@@ -1457,6 +1589,7 @@
     "generator": false
   },
   {
+    "__docId__": 62,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -1469,6 +1602,7 @@
     "content": "// LICENSE : MIT\n\"use strict\";\nexport default class JSerItemRelatedLink {\n    constructor(link) {\n        /** @type {string} */\n        this.title = link[\"title\"];\n        /** @type {string} */\n        this.url = link[\"url\"];\n    }\n}"
   },
   {
+    "__docId__": 63,
     "kind": "class",
     "static": true,
     "variation": null,
@@ -1485,6 +1619,7 @@
     "interface": false
   },
   {
+    "__docId__": 64,
     "kind": "constructor",
     "static": false,
     "variation": null,
@@ -1506,6 +1641,7 @@
     "generator": false
   },
   {
+    "__docId__": 65,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -1525,6 +1661,7 @@
     }
   },
   {
+    "__docId__": 66,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -1544,6 +1681,7 @@
     }
   },
   {
+    "__docId__": 67,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -1556,6 +1694,7 @@
     "content": "// LICENSE : MIT\n\"use strict\";\nexport default class JSerPost {\n    constructor(number, post) {\n        /** @type {number} */\n            // start with 1\n        this.postNumber = number;\n        /** @type {string} */\n        this.title = post[\"title\"];\n        /** @type {string} */\n        this.url = post[\"url\"];\n        /** @type {string} */\n        this.content = post[\"content\"];\n        /** @type {string} */\n        this.category = post[\"category\"];\n        /** @type {Date} */\n        this.date = new Date(post[\"date\"]);\n        /** @type {string[]} */\n        this.tags = post[\"tags\"] || [];\n    }\n}"
   },
   {
+    "__docId__": 68,
     "kind": "class",
     "static": true,
     "variation": null,
@@ -1572,6 +1711,7 @@
     "interface": false
   },
   {
+    "__docId__": 69,
     "kind": "constructor",
     "static": false,
     "variation": null,
@@ -1599,6 +1739,7 @@
     "generator": false
   },
   {
+    "__docId__": 70,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -1618,6 +1759,7 @@
     }
   },
   {
+    "__docId__": 71,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -1637,6 +1779,7 @@
     }
   },
   {
+    "__docId__": 72,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -1656,6 +1799,7 @@
     }
   },
   {
+    "__docId__": 73,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -1675,6 +1819,7 @@
     }
   },
   {
+    "__docId__": 74,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -1694,6 +1839,7 @@
     }
   },
   {
+    "__docId__": 75,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -1713,6 +1859,7 @@
     }
   },
   {
+    "__docId__": 76,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -1732,6 +1879,7 @@
     }
   },
   {
+    "__docId__": 77,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -1741,9 +1889,10 @@
     "access": null,
     "description": null,
     "lineNumber": 2,
-    "content": "// LICENSE : MIT\n\"use strict\";\nexport default class JSerWeek {\n    constructor(currentPost, prevPost, algoItem) {\n        /** @type {number} */\n        this.weekNumber = currentPost.postNumber;\n        /** @type {Date} */\n        this.beginDate = prevPost ? prevPost.date : null;\n        /** @type {Date} */\n        this.endDate = currentPost.date;\n        /** @type {JSerPost} */\n        this.post = currentPost;\n        /** @type {JSerItem[]} */\n        this._items = [];\n        this._algoItem = algoItem;\n    }\n\n    get items() {\n        if (this._items.length === 0) {\n            var pastDate = new Date(1995, 11, 17);\n            this._items = this._algoItem.findItemsBetween(this.beginDate || pastDate, this.endDate)\n        }\n        return this._items;\n    }\n}"
+    "content": "// LICENSE : MIT\n\"use strict\";\nexport default class JSerWeek {\n    constructor(currentPost, prevPost, algoItem) {\n        /** @type {number} */\n        this.weekNumber = currentPost.postNumber;\n        /**\n         * first post has not date, fill with real firstWeek\n         * new Date(\"2010-12-31T15:00:00.000Z\") is actual started date\n         * @type {Date}\n         * */\n        this.beginDate = prevPost ? prevPost.date : new Date(\"2010-12-31T15:00:00.000Z\");\n        /** @type {Date} */\n        this.endDate = currentPost.date;\n        /** @type {JSerPost} */\n        this.post = currentPost;\n        /** @type {JSerItem[]} */\n        this._items = [];\n        this._algoItem = algoItem;\n    }\n\n    get items() {\n        if (this._items.length === 0) {\n            this._items = this._algoItem.findItemsBetween(this.beginDate, this.endDate)\n        }\n        return this._items;\n    }\n}"
   },
   {
+    "__docId__": 78,
     "kind": "class",
     "static": true,
     "variation": null,
@@ -1760,6 +1909,7 @@
     "interface": false
   },
   {
+    "__docId__": 79,
     "kind": "constructor",
     "static": false,
     "variation": null,
@@ -1793,6 +1943,7 @@
     "generator": false
   },
   {
+    "__docId__": 80,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -1812,6 +1963,7 @@
     }
   },
   {
+    "__docId__": 81,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -1819,8 +1971,8 @@
     "memberof": "src/models/JSerWeek.js~JSerWeek",
     "longname": "src/models/JSerWeek.js~JSerWeek#beginDate",
     "access": null,
-    "description": null,
-    "lineNumber": 8,
+    "description": "first post has not date, fill with real firstWeek\nnew Date(\"2010-12-31T15:00:00.000Z\") is actual started date",
+    "lineNumber": 12,
     "type": {
       "nullable": null,
       "types": [
@@ -1831,6 +1983,7 @@
     }
   },
   {
+    "__docId__": 82,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -1839,7 +1992,7 @@
     "longname": "src/models/JSerWeek.js~JSerWeek#endDate",
     "access": null,
     "description": null,
-    "lineNumber": 10,
+    "lineNumber": 14,
     "type": {
       "nullable": null,
       "types": [
@@ -1850,6 +2003,7 @@
     }
   },
   {
+    "__docId__": 83,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -1858,7 +2012,7 @@
     "longname": "src/models/JSerWeek.js~JSerWeek#post",
     "access": null,
     "description": null,
-    "lineNumber": 12,
+    "lineNumber": 16,
     "type": {
       "nullable": null,
       "types": [
@@ -1869,6 +2023,7 @@
     }
   },
   {
+    "__docId__": 84,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -1877,7 +2032,7 @@
     "longname": "src/models/JSerWeek.js~JSerWeek#_items",
     "access": null,
     "description": null,
-    "lineNumber": 14,
+    "lineNumber": 18,
     "type": {
       "nullable": null,
       "types": [
@@ -1888,6 +2043,7 @@
     }
   },
   {
+    "__docId__": 85,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -1896,7 +2052,7 @@
     "longname": "src/models/JSerWeek.js~JSerWeek#_algoItem",
     "access": null,
     "description": null,
-    "lineNumber": 15,
+    "lineNumber": 19,
     "undocument": true,
     "type": {
       "types": [
@@ -1905,6 +2061,7 @@
     }
   },
   {
+    "__docId__": 86,
     "kind": "get",
     "static": false,
     "variation": null,
@@ -1913,7 +2070,7 @@
     "longname": "src/models/JSerWeek.js~JSerWeek#items",
     "access": null,
     "description": null,
-    "lineNumber": 18,
+    "lineNumber": 22,
     "undocument": true,
     "type": {
       "types": [
@@ -1923,6 +2080,7 @@
     "generator": false
   },
   {
+    "__docId__": 87,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -1931,7 +2089,7 @@
     "longname": "src/models/JSerWeek.js~JSerWeek#_items",
     "access": null,
     "description": null,
-    "lineNumber": 21,
+    "lineNumber": 24,
     "undocument": true,
     "type": {
       "types": [
@@ -1940,6 +2098,7 @@
     }
   },
   {
+    "__docId__": 88,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -1952,6 +2111,7 @@
     "content": "// LICENSE : MIT\n\"use strict\";\nconst TfIdf = require(\"natural/lib/natural/tfidf/tfidf\");\n// merge sort\nlet mergeSort = (arr) => {\n    if (arr.length < 2) {\n        return arr;\n    }\n\n    let middle = parseInt(arr.length / 2),\n        left = arr.slice(0, middle),\n        right = arr.slice(middle);\n\n    return merge(mergeSort(left), mergeSort(right));\n};\n\nlet merge = (left, right) => {\n    let result = [];\n\n    while (left.length && right.length) {\n        right[0].measure <= left[0].measure ?\n        result.push(left.shift()) :\n        result.push(right.shift());\n    }\n\n    while (left.length) {\n        result.push(left.shift());\n    }\n    while (right.length) {\n        result.push(right.shift());\n    }\n\n    return result;\n};\nvar ignoreWord = function (word) {\n    if (word.length <= 1) {\n        return false;\n    }\n    // 数字と.のみは除外\n    if (/^v?[\\d\\.]+$/.test(word)) {\n        return false;\n    }\n    if (/[\\?&=]/.test(word)) {\n        return false\n    }\n    if (/^\\.(html|md|php)$/i.test(word)) {\n        return false\n    }\n    return true;\n};\nfunction urlToWords(url) {\n    var pathList = url.split(\"/\");\n    var pathNames = pathList[pathList.length - 1].split(/([-_]|\\.html$|\\.md$|\\.php$|#)/i);\n    return pathNames.filter(ignoreWord);\n\n}\nexport default class NaturalSearcher {\n    constructor(items) {\n        this.items = items;\n        this.tfidf = new TfIdf();\n        this.addItemsAsDocuments(this.items);\n    }\n\n    addItemsAsDocuments(items) {\n        items.forEach((item) => {\n            var urlKeyString = urlToWords(item.url).join(\" \");\n            var relatedString = item.relatedLinks.map(function (relatedObject) {\n                return relatedObject.title + \" \" + urlToWords(relatedObject.url).join(\" \")\n            }).join(\"\");\n            var tagsString = (item.tags || []).join(\" \");\n            // 全部を使うと長すぎるコンテンツが有利になりすぎるので絞る\n            var slicedContent = item.content.slice(0, 200);\n            this.tfidf.addDocument(item.title + \"\\n\" + tagsString + \"\\n\" + slicedContent + \"\\n\" + urlKeyString + \"\\n\" + relatedString);\n        });\n    }\n\n    /**\n     *\n     * @param {JSerItem} targetItem\n     * @param {number} limit\n     */\n    findRelatedItems(targetItem, limit) {\n        var targetIndex = this.items.indexOf(targetItem);\n        if (targetIndex === -1) {\n            this.items.some(function (item, index) {\n                if (item.isEqualItem(item)) {\n                    targetIndex = index;\n                    return true;\n                }\n            });\n            if (targetIndex === -1) {\n                throw new Error(\"Not found this item: \" + targetItem);\n            }\n        }\n        var terms = this.tfidf.listTerms(targetIndex);\n        var results = [];\n        this.tfidf.tfidfs(terms.map(function (term) {\n            return term.term\n        }), function (i, measure) {\n            results.push({\n                index: i,\n                measure: measure\n            });\n        });\n        var sorted = mergeSort(results);\n        // tifidf -> item\n        var matchItems = [];\n        for (var i = 0, len = Math.min(sorted.length, limit + 1); i < len; i++) {\n            // 自分自身は含めない\n            let matchItem = this.items[sorted[i].index];\n            if (this.items[targetIndex].isEqualItem(matchItem)) {\n                continue;\n            }\n            matchItems.push(matchItem);\n        }\n        return matchItems;\n    }\n}"
   },
   {
+    "__docId__": 89,
     "kind": "variable",
     "static": true,
     "variation": null,
@@ -1972,6 +2132,7 @@
     }
   },
   {
+    "__docId__": 90,
     "kind": "variable",
     "static": true,
     "variation": null,
@@ -1992,6 +2153,7 @@
     }
   },
   {
+    "__docId__": 91,
     "kind": "variable",
     "static": true,
     "variation": null,
@@ -2012,6 +2174,7 @@
     }
   },
   {
+    "__docId__": 92,
     "kind": "function",
     "static": true,
     "variation": null,
@@ -2041,6 +2204,7 @@
     "generator": false
   },
   {
+    "__docId__": 93,
     "kind": "function",
     "static": true,
     "variation": null,
@@ -2070,6 +2234,7 @@
     "generator": false
   },
   {
+    "__docId__": 94,
     "kind": "class",
     "static": true,
     "variation": null,
@@ -2086,6 +2251,7 @@
     "interface": false
   },
   {
+    "__docId__": 95,
     "kind": "constructor",
     "static": false,
     "variation": null,
@@ -2107,6 +2273,7 @@
     "generator": false
   },
   {
+    "__docId__": 96,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -2124,6 +2291,7 @@
     }
   },
   {
+    "__docId__": 97,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -2141,6 +2309,7 @@
     }
   },
   {
+    "__docId__": 98,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -2162,6 +2331,7 @@
     "generator": false
   },
   {
+    "__docId__": 99,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -2201,6 +2371,7 @@
     "generator": false
   },
   {
+    "__docId__": 101,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2209,10 +2380,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Infinity",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 102,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2221,10 +2393,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~NaN",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 103,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2233,10 +2406,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~undefined",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 104,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2245,10 +2419,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~null",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 105,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2257,10 +2432,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Object",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 106,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2269,10 +2445,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~object",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 107,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2281,10 +2458,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Function",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 108,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2293,10 +2471,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~function",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 109,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2305,10 +2484,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Boolean",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 110,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2317,10 +2497,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~boolean",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 111,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2329,10 +2510,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Symbol",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 112,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2341,10 +2523,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Error",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 113,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2353,10 +2536,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~EvalError",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 114,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2365,10 +2549,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~InternalError",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 115,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2377,10 +2562,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~RangeError",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 116,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2389,10 +2575,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~ReferenceError",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 117,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2401,10 +2588,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~SyntaxError",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 118,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2413,10 +2601,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~TypeError",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 119,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2425,10 +2614,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~URIError",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 120,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2437,10 +2627,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Number",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 121,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2449,10 +2640,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~number",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 122,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2461,10 +2653,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Date",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 123,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2473,10 +2666,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~String",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 124,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2485,10 +2679,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~string",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 125,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2497,10 +2692,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~RegExp",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 126,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2509,10 +2705,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Array",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 127,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2521,10 +2718,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Int8Array",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 128,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2533,10 +2731,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint8Array",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 129,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2545,10 +2744,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint8ClampedArray",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 130,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2557,10 +2757,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Int16Array",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 131,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2569,10 +2770,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint16Array",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 132,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2581,10 +2783,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Int32Array",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 133,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2593,10 +2796,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint32Array",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 134,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2605,10 +2809,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Float32Array",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 135,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2617,10 +2822,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Float64Array",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 136,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2629,10 +2835,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Map",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 137,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2641,10 +2848,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Set",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 138,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2653,10 +2861,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~WeakMap",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 139,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2665,10 +2874,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~WeakSet",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 140,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2677,10 +2887,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~ArrayBuffer",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 141,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2689,10 +2900,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~DataView",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 142,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2701,10 +2913,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~JSON",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 143,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2713,10 +2926,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Promise",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 144,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2725,10 +2939,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Generator",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 145,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2737,10 +2952,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~GeneratorFunction",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 146,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2749,10 +2965,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Reflect",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 147,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2761,10 +2978,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Proxy",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 149,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2773,10 +2991,11 @@
     "memberof": "BuiltinExternal/WebAPIExternal.js",
     "longname": "BuiltinExternal/WebAPIExternal.js~CanvasRenderingContext2D",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 150,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2785,10 +3004,11 @@
     "memberof": "BuiltinExternal/WebAPIExternal.js",
     "longname": "BuiltinExternal/WebAPIExternal.js~DocumentFragment",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 151,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2797,10 +3017,11 @@
     "memberof": "BuiltinExternal/WebAPIExternal.js",
     "longname": "BuiltinExternal/WebAPIExternal.js~Element",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 152,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2809,10 +3030,11 @@
     "memberof": "BuiltinExternal/WebAPIExternal.js",
     "longname": "BuiltinExternal/WebAPIExternal.js~Event",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 153,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2821,10 +3043,11 @@
     "memberof": "BuiltinExternal/WebAPIExternal.js",
     "longname": "BuiltinExternal/WebAPIExternal.js~Node",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 154,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2833,10 +3056,11 @@
     "memberof": "BuiltinExternal/WebAPIExternal.js",
     "longname": "BuiltinExternal/WebAPIExternal.js~NodeList",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
+    "__docId__": 155,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2845,7 +3069,20 @@
     "memberof": "BuiltinExternal/WebAPIExternal.js",
     "longname": "BuiltinExternal/WebAPIExternal.js~XMLHttpRequest",
     "access": null,
-    "description": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 156,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "AudioContext",
+    "externalLink": "https://developer.mozilla.org/en/docs/Web/API/AudioContext",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~AudioContext",
+    "access": null,
+    "description": "",
     "builtinExternal": true
   }
 ]

@@ -9,12 +9,14 @@
   <script src="script/prettify/prettify.js"></script>
   
   
+  <script src="script/manual.js"></script>
 </head>
-<body class="layout-container">
+<body class="layout-container" data-ice="rootContainer">
 
 <header>
   <a href="./">Home</a>
-  <a href="identifiers.html">Identifier</a>
+  
+  <a href="identifiers.html">Reference</a>
   <a href="source.html">Source</a>
   
   <a data-ice="repoURL" href="https://github.com/jser/stat-js.git" class="repo-url-github">Repository</a>
@@ -27,44 +29,27 @@
   </div>
 </header>
 
-<nav class="navigation" data-ice="nav"><div data-ice="classWrap">
-  <h2>Class</h2>
+<nav class="navigation" data-ice="nav"><div>
   <ul>
     
-  <li data-ice="classDoc"><span><a href="class/src/algo/AlgoItem.js~AlgoItem.html">AlgoItem</a></span></li>
-<li data-ice="classDoc"><span><a href="class/src/algo/AlgoPost.js~AlgoPost.html">AlgoPost</a></span></li>
-<li data-ice="classDoc"><span><a href="class/src/models/JSerItem.js~JSerItem.html">JSerItem</a></span></li>
-<li data-ice="classDoc"><span><a href="class/src/models/JSerItemRelatedLink.js~JSerItemRelatedLink.html">JSerItemRelatedLink</a></span></li>
-<li data-ice="classDoc"><span><a href="class/src/models/JSerPost.js~JSerPost.html">JSerPost</a></span></li>
-<li data-ice="classDoc"><span><a href="class/src/JSerStat.js~JSerStat.html">JSerStat</a></span></li>
-<li data-ice="classDoc"><span><a href="class/src/models/JSerWeek.js~JSerWeek.html">JSerWeek</a></span></li>
-<li data-ice="classDoc"><span><a href="class/src/natural/NaturalSearcher.js~NaturalSearcher.html">NaturalSearcher</a></span></li>
+  <li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">algo</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/algo/AlgoItem.js~AlgoItem.html">AlgoItem</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/algo/AlgoPost.js~AlgoPost.html">AlgoPost</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-findIndexBiggerTime">findIndexBiggerTime</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-findIndexLessTime">findIndexLessTime</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-findIndexesBetween">findIndexesBetween</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">compute</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-countByGroup">countByGroup</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-countTagsByGroup">countTagsByGroup</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">models</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/models/JSerItem.js~JSerItem.html">JSerItem</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/models/JSerItemRelatedLink.js~JSerItemRelatedLink.html">JSerItemRelatedLink</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/models/JSerPost.js~JSerPost.html">JSerPost</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/models/JSerWeek.js~JSerWeek.html">JSerWeek</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">natural</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/natural/NaturalSearcher.js~NaturalSearcher.html">NaturalSearcher</a></span></span></li>
 </ul>
 </div>
-
-
-
-<div data-ice="functionWrap">
-  <h2><a href="function/">Function</a></h2>
-  <ul>
-    
-  <li data-ice="functionDoc"><span><a href="function/index.html#static-function-countByGroup">countByGroup</a></span></li>
-<li data-ice="functionDoc"><span><a href="function/index.html#static-function-countTagsByGroup">countTagsByGroup</a></span></li>
-<li data-ice="functionDoc"><span><a href="function/index.html#static-function-findIndexBiggerTime">findIndexBiggerTime</a></span></li>
-<li data-ice="functionDoc"><span><a href="function/index.html#static-function-findIndexLessTime">findIndexLessTime</a></span></li>
-<li data-ice="functionDoc"><span><a href="function/index.html#static-function-findIndexesBetween">findIndexesBetween</a></span></li>
-</ul>
-</div>
-
-
-
-
-
-
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/JSerStat.js</h1>
-<pre class="source-code line-number"><code class="prettyprint linenums" data-ice="content">// LICENSE : MIT
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// LICENSE : MIT
 &quot;use strict&quot;;
 require(&apos;array.prototype.find&apos;);
 
@@ -74,20 +59,33 @@ import Week from &quot;./models/JSerWeek&quot;
 import AlgoItem from &quot;./algo/AlgoItem&quot;
 import AlgoPost from &quot;./algo/AlgoPost.js&quot;
 import NaturalSearcher from &quot;./natural/NaturalSearcher&quot;
+const sortBy = require(&quot;lodash.sortby&quot;);
+function sortByDate(items) {
+    return sortBy(items, (item) =&gt; {
+        return item.date;
+    });
+}
 function filterJSerCategory(article) {
     return /jser/i.test(article.category);
 }
-export default class JSerStat {
+module.exports = class JSerStat {
     constructor(rawItems, rawPosts) {
-        this._rawItems = rawItems ;
+        this._rawItems = rawItems;
         this._rawPosts = rawPosts;
-        /** @type {JSerItem[]} */
-        this.items = this._rawItems.map(function (item) {
+        /**
+         * &#x65E5;&#x4ED8;&#x3067;&#x6607;&#x9806;&#x306B;sort&#x3055;&#x308C;&#x305F;Items
+         * @type {JSerItem[]}
+         * */
+        this.items = sortByDate(this._rawItems).map(function(item) {
             return new Item(item);
         });
-        // JSer &#x30AB;&#x30C6;&#x30B4;&#x30EA;&#x3060;&#x3051;&#x306B;&#x3059;&#x308B;
-        /** @type {JSerPost[]} */
-        this.posts = this._rawPosts.filter(filterJSerCategory).map((post, index) =&gt; {
+        /**
+         * &#x65E5;&#x4ED8;&#x3067;&#x6607;&#x9806;&#x306B;sort&#x3055;&#x308C;&#x3066;posts
+         *  @type {JSerPost[]}
+         **/
+        this.posts = sortByDate(this._rawPosts)
+        .filter(filterJSerCategory)
+        .map((post, index) =&gt; {
             return new Post(index + 1, post);
         });
         /**
@@ -141,7 +139,7 @@ export default class JSerStat {
      */
     getJSerWeeks() {
         if (this._weeks.length === 0) {
-            this._weeks = this.posts.reduce((results, currentPost, index)=&gt; {
+            this._weeks = this.posts.reduce((results, currentPost, index) =&gt; {
                 var prevPost = this.posts[index - 1];
                 var jserWeek = new Week(currentPost, prevPost, this._algoItem);
                 results.push(jserWeek);
@@ -152,20 +150,27 @@ export default class JSerStat {
     }
 
     /**
-     * begin&#x304B;&#x3089;end&#x306E;&#x7BC4;&#x56F2;&#x306E;JSerWeek&#x306E;&#x914D;&#x5217;&#x3092;&#x8FD4;&#x3059;
+     * begin&#x304B;&#x3089;end&#x306E;&#x7BC4;&#x56F2;&#x306B;&#x542B;&#x307E;&#x308C;&#x308B;JSerWeek&#x306E;&#x914D;&#x5217;&#x3092;&#x8FD4;&#x3059;
+     * JSerWeek#beginDate &#x307E;&#x305F;&#x306F; JSerWeek#endDate &#x3069;&#x3061;&#x3089;&#x304B;&#x304C;&#x304B;&#x304B;&#x308C;&#x3070;&#x542B;&#x307E;&#x308C;&#x308B;&#x3068;&#x5224;&#x65AD;&#x3055;&#x308C;&#x308B;
      * @param {Date} beginDate
      * @param {Date} endDate
      * @returns {JSerWeek[]}
      */
     findJSerWeeksBetween(beginDate, endDate) {
-        var algoPost = this._algoPost;
-        var posts = algoPost.findPostsBetween(beginDate, endDate);
-        return posts.reduce((results, currentPost, index)=&gt; {
-            var prevPost = this.posts[index - 1];
-            var jserWeek = new Week(currentPost, prevPost, this._algoItem);
-            results.push(jserWeek);
-            return results;
-        }, []);
+        const weeks = this.getJSerWeeks();
+        const beginTime = beginDate.getTime();
+        const endTime = endDate.getTime();
+        return weeks.filter(week =&gt; {
+            const weekBeginTime = week.beginDate.getTime();
+            const weekEndTime = week.endDate.getTime();
+            if (beginTime &lt;= weekBeginTime &amp;&amp; weekBeginTime &lt;= endTime) {
+                return true;
+            }
+            if (beginTime &lt;= weekEndTime &amp;&amp; weekEndTime &lt;= endTime) {
+                return true;
+            }
+            return false;
+        });
     }
 
     // deprecated
@@ -190,6 +195,20 @@ export default class JSerStat {
         return new Week(targetPost, prevPost, this._algoItem);
     }
 
+    /**
+     * `postURL`&#x306B;&#x4E00;&#x81F4;&#x3059;&#x308B;JSerWeek&#x3092;&#x8FD4;&#x3059;
+     * @param {string} postURL
+     * @returns {JSerWeek}
+     */
+    findJSerWeekWithURL(postURL) {
+        const weeks = this.getJSerWeeks().filter(week =&gt; {
+            return week.post.url === postURL;
+        });
+        if (weeks.length &gt; 0) {
+            return weeks[0];
+        }
+    }
+
     // deprecated
     getJSerWeek(number) {
         return this.findJSerWeek(number);
@@ -202,10 +221,10 @@ export default class JSerStat {
      * &#x672A;&#x6765;&#x306E;&#x8A18;&#x4E8B;&#x306A;&#x3069;JSerWeek&#x306B;&#x6240;&#x5C5E;&#x3057;&#x3066;&#x3044;&#x306A;&#x3044;&#x5834;&#x5408;&#x3082;&#x3042;&#x308B;
      */
     findWeekWithItem(jserItem) {
-        var targetItem = new Item(jserItem);
-        var tenDaysAfter = new Date(targetItem.date);
-        tenDaysAfter.setDate(targetItem.date.getDate() + 12);
-        var jSerWeeks = this.findJSerWeeksBetween(targetItem.date, tenDaysAfter);
+        const targetItem = new Item(jserItem);
+        const tenDaysAfter = new Date(targetItem.date);
+        tenDaysAfter.setDate(targetItem.date.getDate() + 10);
+        const jSerWeeks = this.findJSerWeeksBetween(targetItem.date, tenDaysAfter);
         return jSerWeeks.find(week =&gt; {
             if (week.post.date &lt; targetItem.date) {
                 return false;
@@ -240,10 +259,11 @@ export default class JSerStat {
         return this.naturalSearch.findRelatedItems(item, limit);
     }
 }</code></pre>
+
 </div>
 
 <footer class="footer">
-  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.2.1)</span></a>
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.4.8)</span></a>
 </footer>
 
 <script src="script/search_index.js"></script>

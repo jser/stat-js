@@ -1,47 +1,83 @@
 {
-  "coverage": "59.09%",
-  "expectCount": 66,
-  "actualCount": 39,
+  "coverage": "56%",
+  "expectCount": 50,
+  "actualCount": 28,
   "files": {
     "src/algo/AlgoItem.js": {
       "expectCount": 5,
-      "actualCount": 3
+      "actualCount": 3,
+      "undocumentLines": [
+        6,
+        12
+      ]
     },
     "src/algo/AlgoPost.js": {
       "expectCount": 5,
-      "actualCount": 3
+      "actualCount": 3,
+      "undocumentLines": [
+        6,
+        12
+      ]
     },
     "src/models/JSerItem.js": {
       "expectCount": 9,
-      "actualCount": 7
+      "actualCount": 7,
+      "undocumentLines": [
+        5,
+        6
+      ]
     },
     "src/models/JSerItemRelatedLink.js": {
       "expectCount": 4,
-      "actualCount": 2
+      "actualCount": 2,
+      "undocumentLines": [
+        3,
+        4
+      ]
     },
     "src/models/JSerPost.js": {
       "expectCount": 9,
-      "actualCount": 7
-    },
-    "src/JSerStat.js": {
-      "expectCount": 16,
-      "actualCount": 11
+      "actualCount": 7,
+      "undocumentLines": [
+        3,
+        4
+      ]
     },
     "src/models/JSerWeek.js": {
       "expectCount": 7,
-      "actualCount": 4
+      "actualCount": 4,
+      "undocumentLines": [
+        3,
+        4,
+        22
+      ]
     },
     "src/natural/NaturalSearcher.js": {
       "expectCount": 6,
-      "actualCount": 1
+      "actualCount": 1,
+      "undocumentLines": [
+        57,
+        64,
+        58,
+        59,
+        60
+      ]
     },
     "src/compute/compute-tags.js": {
       "expectCount": 2,
-      "actualCount": 1
+      "actualCount": 1,
+      "undocumentLines": [
+        17
+      ]
     },
     "src/algo/algoSearch.js": {
       "expectCount": 3,
-      "actualCount": 0
+      "actualCount": 0,
+      "undocumentLines": [
+        9,
+        23,
+        4
+      ]
     }
   }
 }

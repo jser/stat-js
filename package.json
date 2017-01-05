@@ -1,0 +1,56 @@
+{
+  "name": "jser-stat",
+  "version": "3.0.0",
+  "description": "JSer.info stat library",
+  "main": "lib/index.js",
+  "bin": {
+    "update-jser-stat": "bin/update-jser-stat.js"
+  },
+  "browser": "lib/browser-index.js",
+  "files": [
+    "bin",
+    "data/*.js",
+    "lib",
+    "src"
+  ],
+  "scripts": {
+    "install": "node data/install-hook.js",
+    "prepublish": "npm run --if-present build",
+    "build": "NODE_ENV=production babel src --out-dir lib --source-maps",
+    "watch": "babel src --out-dir lib --watch --source-maps",
+    "doc": "esdoc -c esdoc.json",
+    "deploy": "npm run doc && gh-pages -d esdoc",
+    "test": "mocha test && (cd example && npm test)"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jser/stat-js.git"
+  },
+  "keywords": [
+    "jser"
+  ],
+  "author": "azu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jser/stat-js/issues"
+  },
+  "homepage": "https://github.com/jser/stat-js",
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-jsdoc-to-assert": "^4.0.0",
+    "babel-preset-power-assert": "^1.0.0",
+    "babel-register": "^6.18.0",
+    "esdoc": "^0.4.8",
+    "gh-pages": "^0.12.0",
+    "mocha": "^3.2.0",
+    "power-assert": "^1.4.2"
+  },
+  "dependencies": {
+    "array.prototype.find": "^2.0.1",
+    "binarysearch": "^1.0.0",
+    "lodash.sortby": "^4.7.0",
+    "natural": "^0.4.0",
+    "request": "^2.57.0"
+  }
+}

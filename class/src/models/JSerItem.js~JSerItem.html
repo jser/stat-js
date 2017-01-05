@@ -9,12 +9,14 @@
   <script src="script/prettify/prettify.js"></script>
   
   
+  <script src="script/manual.js"></script>
 </head>
-<body class="layout-container">
+<body class="layout-container" data-ice="rootContainer">
 
 <header>
   <a href="./">Home</a>
-  <a href="identifiers.html">Identifier</a>
+  
+  <a href="identifiers.html">Reference</a>
   <a href="source.html">Source</a>
   
   <a data-ice="repoURL" href="https://github.com/jser/stat-js.git" class="repo-url-github">Repository</a>
@@ -27,40 +29,23 @@
   </div>
 </header>
 
-<nav class="navigation" data-ice="nav"><div data-ice="classWrap">
-  <h2>Class</h2>
+<nav class="navigation" data-ice="nav"><div>
   <ul>
     
-  <li data-ice="classDoc"><span><a href="class/src/algo/AlgoItem.js~AlgoItem.html">AlgoItem</a></span></li>
-<li data-ice="classDoc"><span><a href="class/src/algo/AlgoPost.js~AlgoPost.html">AlgoPost</a></span></li>
-<li data-ice="classDoc"><span><a href="class/src/models/JSerItem.js~JSerItem.html">JSerItem</a></span></li>
-<li data-ice="classDoc"><span><a href="class/src/models/JSerItemRelatedLink.js~JSerItemRelatedLink.html">JSerItemRelatedLink</a></span></li>
-<li data-ice="classDoc"><span><a href="class/src/models/JSerPost.js~JSerPost.html">JSerPost</a></span></li>
-<li data-ice="classDoc"><span><a href="class/src/JSerStat.js~JSerStat.html">JSerStat</a></span></li>
-<li data-ice="classDoc"><span><a href="class/src/models/JSerWeek.js~JSerWeek.html">JSerWeek</a></span></li>
-<li data-ice="classDoc"><span><a href="class/src/natural/NaturalSearcher.js~NaturalSearcher.html">NaturalSearcher</a></span></li>
+  <li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">algo</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/algo/AlgoItem.js~AlgoItem.html">AlgoItem</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/algo/AlgoPost.js~AlgoPost.html">AlgoPost</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-findIndexBiggerTime">findIndexBiggerTime</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-findIndexLessTime">findIndexLessTime</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-findIndexesBetween">findIndexesBetween</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">compute</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-countByGroup">countByGroup</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-countTagsByGroup">countTagsByGroup</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">models</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/models/JSerItem.js~JSerItem.html">JSerItem</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/models/JSerItemRelatedLink.js~JSerItemRelatedLink.html">JSerItemRelatedLink</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/models/JSerPost.js~JSerPost.html">JSerPost</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/models/JSerWeek.js~JSerWeek.html">JSerWeek</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">natural</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/natural/NaturalSearcher.js~NaturalSearcher.html">NaturalSearcher</a></span></span></li>
 </ul>
 </div>
-
-
-
-<div data-ice="functionWrap">
-  <h2><a href="function/">Function</a></h2>
-  <ul>
-    
-  <li data-ice="functionDoc"><span><a href="function/index.html#static-function-countByGroup">countByGroup</a></span></li>
-<li data-ice="functionDoc"><span><a href="function/index.html#static-function-countTagsByGroup">countTagsByGroup</a></span></li>
-<li data-ice="functionDoc"><span><a href="function/index.html#static-function-findIndexBiggerTime">findIndexBiggerTime</a></span></li>
-<li data-ice="functionDoc"><span><a href="function/index.html#static-function-findIndexLessTime">findIndexLessTime</a></span></li>
-<li data-ice="functionDoc"><span><a href="function/index.html#static-function-findIndexesBetween">findIndexesBetween</a></span></li>
-</ul>
-</div>
-
-
-
-
-
-
 </nav>
 
 <div class="content" data-ice="content"><div class="header-notice">
@@ -703,7 +688,7 @@
 </div>
 
 <footer class="footer">
-  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.2.1)</span></a>
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.4.8)</span></a>
 </footer>
 
 <script src="script/search_index.js"></script>

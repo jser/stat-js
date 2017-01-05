@@ -9,12 +9,14 @@
   <script src="script/prettify/prettify.js"></script>
   
   
+  <script src="script/manual.js"></script>
 </head>
-<body class="layout-container">
+<body class="layout-container" data-ice="rootContainer">
 
 <header>
   <a href="./">Home</a>
-  <a href="identifiers.html">Identifier</a>
+  
+  <a href="identifiers.html">Reference</a>
   <a href="source.html">Source</a>
   
   <a data-ice="repoURL" href="https://github.com/jser/stat-js.git" class="repo-url-github">Repository</a>
@@ -27,46 +29,29 @@
   </div>
 </header>
 
-<nav class="navigation" data-ice="nav"><div data-ice="classWrap">
-  <h2>Class</h2>
+<nav class="navigation" data-ice="nav"><div>
   <ul>
     
-  <li data-ice="classDoc"><span><a href="class/src/algo/AlgoItem.js~AlgoItem.html">AlgoItem</a></span></li>
-<li data-ice="classDoc"><span><a href="class/src/algo/AlgoPost.js~AlgoPost.html">AlgoPost</a></span></li>
-<li data-ice="classDoc"><span><a href="class/src/models/JSerItem.js~JSerItem.html">JSerItem</a></span></li>
-<li data-ice="classDoc"><span><a href="class/src/models/JSerItemRelatedLink.js~JSerItemRelatedLink.html">JSerItemRelatedLink</a></span></li>
-<li data-ice="classDoc"><span><a href="class/src/models/JSerPost.js~JSerPost.html">JSerPost</a></span></li>
-<li data-ice="classDoc"><span><a href="class/src/JSerStat.js~JSerStat.html">JSerStat</a></span></li>
-<li data-ice="classDoc"><span><a href="class/src/models/JSerWeek.js~JSerWeek.html">JSerWeek</a></span></li>
-<li data-ice="classDoc"><span><a href="class/src/natural/NaturalSearcher.js~NaturalSearcher.html">NaturalSearcher</a></span></li>
+  <li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">algo</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/algo/AlgoItem.js~AlgoItem.html">AlgoItem</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/algo/AlgoPost.js~AlgoPost.html">AlgoPost</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-findIndexBiggerTime">findIndexBiggerTime</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-findIndexLessTime">findIndexLessTime</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-findIndexesBetween">findIndexesBetween</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">compute</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-countByGroup">countByGroup</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-countTagsByGroup">countTagsByGroup</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">models</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/models/JSerItem.js~JSerItem.html">JSerItem</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/models/JSerItemRelatedLink.js~JSerItemRelatedLink.html">JSerItemRelatedLink</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/models/JSerPost.js~JSerPost.html">JSerPost</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/models/JSerWeek.js~JSerWeek.html">JSerWeek</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">natural</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/natural/NaturalSearcher.js~NaturalSearcher.html">NaturalSearcher</a></span></span></li>
 </ul>
 </div>
-
-
-
-<div data-ice="functionWrap">
-  <h2><a href="function/">Function</a></h2>
-  <ul>
-    
-  <li data-ice="functionDoc"><span><a href="function/index.html#static-function-countByGroup">countByGroup</a></span></li>
-<li data-ice="functionDoc"><span><a href="function/index.html#static-function-countTagsByGroup">countTagsByGroup</a></span></li>
-<li data-ice="functionDoc"><span><a href="function/index.html#static-function-findIndexBiggerTime">findIndexBiggerTime</a></span></li>
-<li data-ice="functionDoc"><span><a href="function/index.html#static-function-findIndexLessTime">findIndexLessTime</a></span></li>
-<li data-ice="functionDoc"><span><a href="function/index.html#static-function-findIndexesBetween">findIndexesBetween</a></span></li>
-</ul>
-</div>
-
-
-
-
-
-
 </nav>
 
-<div class="content" data-ice="content"><div data-ice="index"><h1 id="jser-stat-build-status-https-travis-ci-org-jser-stat-js-svg-branch-master-https-travis-ci-org-jser-stat-js-">jser-stat <a href="https://travis-ci.org/jser/stat-js"><img src="https://travis-ci.org/jser/stat-js.svg?branch=master" alt="Build Status"></a></h1>
+<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="jser-stat-build-status-https-travis-ci-org-jser-stat-js-svg-branch-master-https-travis-ci-org-jser-stat-js-">jser-stat <a href="https://travis-ci.org/jser/stat-js"><img src="https://travis-ci.org/jser/stat-js.svg?branch=master" alt="Build Status"></a></h1>
 <p>JSer.info stat library</p>
 <h2 id="installation">Installation</h2>
-<pre><code><pre class="source-code"><code class="prettyprint">npm install jser-stat</code></pre>
+<pre><code><code class="source-code prettyprint">npm install jser-stat</code>
 </code></pre><h2 id="data-source">Data Source</h2>
 <ul>
 <li><a href="http://jser.info/source-data/items.json">http://jser.info/source-data/items.json</a><ul>
@@ -81,6 +66,56 @@
 </ul>
 <h2 id="usage">Usage</h2>
 <p>API Document: <a href="http://jser.info/stat-js/">http://jser.info/stat-js/</a></p>
+<h3 id="constructor">Constructor</h3>
+<h4 id="new-jserstat-rawitems-rawposts-">new JSerStat([rawItems, rawPosts]);</h4>
+<p>Automatically load <code>rawItems</code> and <code>rawPosts</code> in Node.js.</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">var JSerStat = require(&quot;jser-stat&quot;).JSerStat;
+var stat = new JSerStat();
+var startTime = Date.now();
+var firstWeek = stat.findJSerWeek(1);
+var weeks = stat.findJSerWeeksBetween(new Date(&quot;2013-01-31T15:00:00.000Z&quot;), new Date(&quot;2015-06-01T13:22:37.167Z&quot;));
+var theItem = stat.findItemWithURL(&quot;http://d.hatena.ne.jp/brazil/20110131/1296419283&quot;);
+console.log(theItem);
+/*
+JSerItem {
+  title: &apos;&#x5B9F;&#x884C;&#x9593;&#x9694;&#x3092;&#x8ABF;&#x6574;&#x3059;&#x308B; - &#x306F;&#x3066;&#x306A;&#x30C0;&#x30A4;&#x30A2;&#x30EA;&#x30FC; - &#x7121;&#x6599;&#x3067;&#x7C21;&#x5358;&#x3002;&#x5E83;&#x544A;&#x306E;&#x306A;&#x3044;&#x30B7;&#x30F3;&#x30D7;&#x30EB;&#x306A;&#x30D6;&#x30ED;&#x30B0;&#x3092;&#x306F;&#x3058;&#x3081;&#x3088;&#x3046;&#xFF01;&apos;,
+  url: &apos;http://d.hatena.ne.jp/brazil/20110131/1296419283&apos;,
+  content: &apos;&#x4E00;&#x5B9A;&#x9593;&#x9694;&#x5185;&#x3067;&#x4E00;&#x5EA6;&#x306E;&#x307F;&#x5B9F;&#x884C;&#x3059;&#x308B; throttle&#x3001;\n&#x4E00;&#x5B9A;&#x9593;&#x9694;&#x306B;&#x547C;&#x3073;&#x51FA;&#x3055;&#x308C;&#x7121;&#x3051;&#x308C;&#x3070;&#x5B9F;&#x884C;&#x3059;&#x308B; debounce&#x3000;&#x306B;&#x3064;&#x3044;&#x3066;&#x306E;&#x89E3;&#x8AAC;&#x3002;\n&#x305D;&#x308C;&#x305E;&#x308C;&#x7528;&#x9014;&#x3084;&#x56F3;&#x89E3;&#x3082;&#x4ED8;&#x3044;&#x3066;&#x3044;&#x3066;&#x5927;&#x5909;&#x308F;&#x304B;&#x308A;&#x3084;&#x3059;&#x3044;&#x3002;&apos;,
+  tags: [],
+  date: Sat Jan 01 2011 00:00:00 GMT+0900 (JST),
+  relatedLinks: [] }
+*/</code>
+</code></pre>
+<p>Manually load <code>rawItems</code> and <code>rawPosts</code> in Browser.</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">function fetchURL(URL) {
+    return new Promise(function (resolve, reject) {
+        var req = new XMLHttpRequest();
+        req.open(&apos;GET&apos;, URL);
+        req.onload = function () {
+            if (req.status == 200) {
+                resolve(req.response);
+            } else {
+                reject(Error(req.statusText));
+            }
+        };
+        req.onerror = function () {
+            reject(Error(req.statusText));
+        };
+        req.send();
+    });
+}
+function getStat() {
+    return Promise.all([
+        fetchURL(&quot;http://jser.info/posts.json&quot;),
+        fetchURL(&quot;http://jser.info/source-data/items.json&quot;)
+    ]).then(([postString. itemsString]) =&gt; {
+        var posts = JSON.parse(postString).reverse();
+        var items = JSON.parse(itemsString);
+        var jSerStat = new JSerStat(items, posts);
+        return jSerStat;
+    });
+}</code>
+</code></pre>
 <h3 id="models">Models</h3>
 <p>jser-stat has these model.</p>
 <ul>
@@ -104,8 +139,13 @@
 <p>return JSerItem match the <code>URL</code>.</p>
 <h3 id="findrelateditems-item-limit-10-jseritem-">findRelatedItems(item, limit = 10): JSerItem[]</h3>
 <p>return JSerItem<strong>s</strong> that related the argument <code>item</code>.</p>
+<h2 id="cli">CLI</h2>
+<h3 id="update-stat-data">Update stat data</h3>
+<p>Install jser-stat and add <code>update-jser-stat</code> command</p>
+<pre><code><code class="source-code prettyprint">$(npm bin)/update-jser-stat</code>
+</code></pre><p>Update <code>data/items.json</code> adn <code>data/posts.json</code></p>
 <h2 id="tests">Tests</h2>
-<pre><code><pre class="source-code"><code class="prettyprint">npm test</code></pre>
+<pre><code><code class="source-code prettyprint">npm test</code>
 </code></pre><h2 id="contributing">Contributing</h2>
 <ol>
 <li>Fork it!</li>
@@ -120,7 +160,7 @@
 </div>
 
 <footer class="footer">
-  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.2.1)</span></a>
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.4.8)</span></a>
 </footer>
 
 <script src="script/search_index.js"></script>

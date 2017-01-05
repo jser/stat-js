@@ -30,12 +30,6 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
-    "jser-stat/src/jserstat.js~jserstat",
-    "class/src/JSerStat.js~JSerStat.html",
-    "<span>JSerStat</span> <span class=\"search-result-import-path\">jser-stat/src/JSerStat.js</span>",
-    "class"
-  ],
-  [
     "jser-stat/src/models/jserweek.js~jserweek",
     "class/src/models/JSerWeek.js~JSerWeek.html",
     "<span>JSerWeek</span> <span class=\"search-result-import-path\">jser-stat/src/models/JSerWeek.js</span>",
@@ -360,6 +354,12 @@ window.esdocSearchIndex = [
     "external"
   ],
   [
+    "builtinexternal/webapiexternal.js~audiocontext",
+    "external/index.html",
+    "BuiltinExternal/WebAPIExternal.js~AudioContext",
+    "external"
+  ],
+  [
     "builtinexternal/webapiexternal.js~canvasrenderingcontext2d",
     "external/index.html",
     "BuiltinExternal/WebAPIExternal.js~CanvasRenderingContext2D",
@@ -406,96 +406,6 @@ window.esdocSearchIndex = [
     "file/src/JSerStat.js.html",
     "src/JSerStat.js",
     "file"
-  ],
-  [
-    "src/jserstat.js~jserstat#constructor",
-    "class/src/JSerStat.js~JSerStat.html#instance-constructor-constructor",
-    "src/JSerStat.js~JSerStat#constructor",
-    "method"
-  ],
-  [
-    "src/jserstat.js~jserstat#finditemwithurl",
-    "class/src/JSerStat.js~JSerStat.html#instance-method-findItemWithURL",
-    "src/JSerStat.js~JSerStat#findItemWithURL",
-    "method"
-  ],
-  [
-    "src/jserstat.js~jserstat#finditemsbetween",
-    "class/src/JSerStat.js~JSerStat.html#instance-method-findItemsBetween",
-    "src/JSerStat.js~JSerStat#findItemsBetween",
-    "method"
-  ],
-  [
-    "src/jserstat.js~jserstat#findjserweek",
-    "class/src/JSerStat.js~JSerStat.html#instance-method-findJSerWeek",
-    "src/JSerStat.js~JSerStat#findJSerWeek",
-    "method"
-  ],
-  [
-    "src/jserstat.js~jserstat#findjserweeksbetween",
-    "class/src/JSerStat.js~JSerStat.html#instance-method-findJSerWeeksBetween",
-    "src/JSerStat.js~JSerStat#findJSerWeeksBetween",
-    "method"
-  ],
-  [
-    "src/jserstat.js~jserstat#findrelateditems",
-    "class/src/JSerStat.js~JSerStat.html#instance-method-findRelatedItems",
-    "src/JSerStat.js~JSerStat#findRelatedItems",
-    "method"
-  ],
-  [
-    "src/jserstat.js~jserstat#findweekwithitem",
-    "class/src/JSerStat.js~JSerStat.html#instance-method-findWeekWithItem",
-    "src/JSerStat.js~JSerStat#findWeekWithItem",
-    "method"
-  ],
-  [
-    "src/jserstat.js~jserstat#getitemsbetween",
-    "class/src/JSerStat.js~JSerStat.html#instance-method-getItemsBetWeen",
-    "src/JSerStat.js~JSerStat#getItemsBetWeen",
-    "method"
-  ],
-  [
-    "src/jserstat.js~jserstat#getjserweek",
-    "class/src/JSerStat.js~JSerStat.html#instance-method-getJSerWeek",
-    "src/JSerStat.js~JSerStat#getJSerWeek",
-    "method"
-  ],
-  [
-    "src/jserstat.js~jserstat#getjserweeks",
-    "class/src/JSerStat.js~JSerStat.html#instance-method-getJSerWeeks",
-    "src/JSerStat.js~JSerStat#getJSerWeeks",
-    "method"
-  ],
-  [
-    "src/jserstat.js~jserstat#getjserweeksbetween",
-    "class/src/JSerStat.js~JSerStat.html#instance-method-getJSerWeeksBetWeen",
-    "src/JSerStat.js~JSerStat#getJSerWeeksBetWeen",
-    "method"
-  ],
-  [
-    "src/jserstat.js~jserstat#gettotalweekcount",
-    "class/src/JSerStat.js~JSerStat.html#instance-method-getTotalWeekCount",
-    "src/JSerStat.js~JSerStat#getTotalWeekCount",
-    "method"
-  ],
-  [
-    "src/jserstat.js~jserstat#items",
-    "class/src/JSerStat.js~JSerStat.html#instance-member-items",
-    "src/JSerStat.js~JSerStat#items",
-    "member"
-  ],
-  [
-    "src/jserstat.js~jserstat#naturalsearch",
-    "class/src/JSerStat.js~JSerStat.html#instance-member-naturalSearch",
-    "src/JSerStat.js~JSerStat#naturalSearch",
-    "member"
-  ],
-  [
-    "src/jserstat.js~jserstat#posts",
-    "class/src/JSerStat.js~JSerStat.html#instance-member-posts",
-    "src/JSerStat.js~JSerStat#posts",
-    "member"
   ],
   [
     "src/algo/algoitem.js",

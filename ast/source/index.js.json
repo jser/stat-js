@@ -280,104 +280,66 @@
       }
     },
     {
-      "type": "VariableDeclaration",
-      "declarations": [
+      "type": "ImportDeclaration",
+      "specifiers": [
         {
-          "type": "VariableDeclarator",
-          "id": {
+          "type": "ImportDefaultSpecifier",
+          "local": {
             "type": "Identifier",
             "name": "JSerStat",
             "range": [
-              129,
-              137
+              130,
+              138
             ],
             "loc": {
               "start": {
                 "line": 5,
-                "column": 6
+                "column": 7
               },
               "end": {
                 "line": 5,
-                "column": 14
-              }
-            }
-          },
-          "init": {
-            "type": "CallExpression",
-            "callee": {
-              "type": "Identifier",
-              "name": "require",
-              "range": [
-                140,
-                147
-              ],
-              "loc": {
-                "start": {
-                  "line": 5,
-                  "column": 17
-                },
-                "end": {
-                  "line": 5,
-                  "column": 24
-                }
-              }
-            },
-            "arguments": [
-              {
-                "type": "Literal",
-                "value": "./JSerStat",
-                "raw": "\"./JSerStat\"",
-                "range": [
-                  148,
-                  160
-                ],
-                "loc": {
-                  "start": {
-                    "line": 5,
-                    "column": 25
-                  },
-                  "end": {
-                    "line": 5,
-                    "column": 37
-                  }
-                }
-              }
-            ],
-            "range": [
-              140,
-              161
-            ],
-            "loc": {
-              "start": {
-                "line": 5,
-                "column": 17
-              },
-              "end": {
-                "line": 5,
-                "column": 38
+                "column": 15
               }
             }
           },
           "range": [
-            129,
-            161
+            130,
+            138
           ],
           "loc": {
             "start": {
               "line": 5,
-              "column": 6
+              "column": 7
             },
             "end": {
               "line": 5,
-              "column": 38
+              "column": 15
             }
           }
         }
       ],
-      "kind": "const",
+      "source": {
+        "type": "Literal",
+        "value": "./JSerStat",
+        "raw": "\"./JSerStat\"",
+        "range": [
+          144,
+          156
+        ],
+        "loc": {
+          "start": {
+            "line": 5,
+            "column": 21
+          },
+          "end": {
+            "line": 5,
+            "column": 33
+          }
+        }
+      },
       "range": [
         123,
-        162
+        157
       ],
       "loc": {
         "start": {
@@ -386,7 +348,7 @@
         },
         "end": {
           "line": 5,
-          "column": 39
+          "column": 34
         }
       }
     },
@@ -402,8 +364,8 @@
             "type": "Identifier",
             "name": "module",
             "range": [
-              163,
-              169
+              158,
+              164
             ],
             "loc": {
               "start": {
@@ -420,8 +382,8 @@
             "type": "Identifier",
             "name": "exports",
             "range": [
-              170,
-              177
+              165,
+              172
             ],
             "loc": {
               "start": {
@@ -435,8 +397,8 @@
             }
           },
           "range": [
-            163,
-            177
+            158,
+            172
           ],
           "loc": {
             "start": {
@@ -458,8 +420,8 @@
                 "type": "Identifier",
                 "name": "JSerStat",
                 "range": [
-                  186,
-                  194
+                  181,
+                  189
                 ],
                 "loc": {
                   "start": {
@@ -478,8 +440,8 @@
                   "type": "Identifier",
                   "name": "_JSerStat",
                   "range": [
-                    205,
-                    214
+                    200,
+                    209
                   ],
                   "loc": {
                     "start": {
@@ -499,8 +461,8 @@
                       "type": "Identifier",
                       "name": "items",
                       "range": [
-                        215,
-                        220
+                        210,
+                        215
                       ],
                       "loc": {
                         "start": {
@@ -517,8 +479,8 @@
                       "type": "Identifier",
                       "name": "_Items",
                       "range": [
-                        223,
-                        229
+                        218,
+                        224
                       ],
                       "loc": {
                         "start": {
@@ -532,8 +494,8 @@
                       }
                     },
                     "range": [
-                      215,
-                      229
+                      210,
+                      224
                     ],
                     "loc": {
                       "start": {
@@ -552,8 +514,8 @@
                       "type": "Identifier",
                       "name": "posts",
                       "range": [
-                        231,
-                        236
+                        226,
+                        231
                       ],
                       "loc": {
                         "start": {
@@ -570,8 +532,8 @@
                       "type": "Identifier",
                       "name": "_Posts",
                       "range": [
-                        239,
-                        245
+                        234,
+                        240
                       ],
                       "loc": {
                         "start": {
@@ -585,8 +547,8 @@
                       }
                     },
                     "range": [
-                      231,
-                      245
+                      226,
+                      240
                     ],
                     "loc": {
                       "start": {
@@ -611,8 +573,8 @@
                           "type": "Identifier",
                           "name": "JSerStat",
                           "range": [
-                            268,
-                            276
+                            263,
+                            271
                           ],
                           "loc": {
                             "start": {
@@ -630,8 +592,8 @@
                             "type": "Identifier",
                             "name": "items",
                             "range": [
-                              277,
-                              282
+                              272,
+                              277
                             ],
                             "loc": {
                               "start": {
@@ -648,8 +610,8 @@
                             "type": "Identifier",
                             "name": "posts",
                             "range": [
-                              284,
-                              289
+                              279,
+                              284
                             ],
                             "loc": {
                               "start": {
@@ -664,8 +626,8 @@
                           }
                         ],
                         "range": [
-                          264,
-                          290
+                          259,
+                          285
                         ],
                         "loc": {
                           "start": {
@@ -679,8 +641,8 @@
                         }
                       },
                       "range": [
-                        257,
-                        291
+                        252,
+                        286
                       ],
                       "loc": {
                         "start": {
@@ -695,8 +657,8 @@
                     }
                   ],
                   "range": [
-                    247,
-                    297
+                    242,
+                    292
                   ],
                   "loc": {
                     "start": {
@@ -712,8 +674,8 @@
                 "generator": false,
                 "expression": false,
                 "range": [
-                  196,
-                  297
+                  191,
+                  292
                 ],
                 "loc": {
                   "start": {
@@ -731,8 +693,8 @@
               "shorthand": false,
               "computed": false,
               "range": [
-                186,
-                297
+                181,
+                292
               ],
               "loc": {
                 "start": {
@@ -751,8 +713,8 @@
                 "type": "Identifier",
                 "name": "compute",
                 "range": [
-                  303,
-                  310
+                  298,
+                  305
                 ],
                 "loc": {
                   "start": {
@@ -771,8 +733,8 @@
                   "type": "Identifier",
                   "name": "require",
                   "range": [
-                    312,
-                    319
+                    307,
+                    314
                   ],
                   "loc": {
                     "start": {
@@ -791,8 +753,8 @@
                     "value": "./compute/compute-tags",
                     "raw": "\"./compute/compute-tags\"",
                     "range": [
-                      320,
-                      344
+                      315,
+                      339
                     ],
                     "loc": {
                       "start": {
@@ -807,8 +769,8 @@
                   }
                 ],
                 "range": [
-                  312,
-                  345
+                  307,
+                  340
                 ],
                 "loc": {
                   "start": {
@@ -826,8 +788,8 @@
               "shorthand": false,
               "computed": false,
               "range": [
-                303,
-                345
+                298,
+                340
               ],
               "loc": {
                 "start": {
@@ -842,8 +804,8 @@
             }
           ],
           "range": [
-            180,
-            347
+            175,
+            342
           ],
           "loc": {
             "start": {
@@ -857,8 +819,8 @@
           }
         },
         "range": [
-          163,
-          347
+          158,
+          342
         ],
         "loc": {
           "start": {
@@ -872,8 +834,8 @@
         }
       },
       "range": [
-        163,
-        348
+        158,
+        343
       ],
       "loc": {
         "start": {
@@ -890,7 +852,7 @@
   "sourceType": "module",
   "range": [
     17,
-    348
+    343
   ],
   "loc": {
     "start": {
