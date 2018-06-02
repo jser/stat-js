@@ -1,8 +1,8 @@
 module.exports = {
     items: {
-        json: "http://jser.info/source-data/items.json"
+        json: "https://jser.info/source-data/items.json"
     },
     posts: {
-        json: "http://jser.info/posts.json"
+        json: "https://jser.info/posts.json"
     }
 };
